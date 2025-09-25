@@ -28,7 +28,7 @@ body {
         left:0px;
         width:1280px;
         height:720px;
-        background-image:url('imgs/scoreboard01.png');
+        background-image:url('imgs/Scoreboard01.png');
         background-repeat: no-repeat;
 }
 
@@ -47,7 +47,7 @@ body {
         left:200px;
         width:1280px;
         height:720px;
-        background-image:url('imgs/scoreboard03.png');
+        background-image:url('imgs/Scoreboard03.png');
         background-repeat: no-repeat;
 }
 #board4 {
@@ -56,7 +56,7 @@ body {
         left:-200px;
         width:1280px;
         height:720px;
-        background-image:url('imgs/scoreboard04.png');
+        background-image:url('imgs/Scoreboard04.png');
         background-repeat: no-repeat;
 }
 

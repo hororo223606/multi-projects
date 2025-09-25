@@ -30,6 +30,8 @@ body {
         height:720px;
         background-image:url('imgs/aya_scoreboard_0.png');
         background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
 }
 
 #board2 {

@@ -115,9 +115,9 @@ body {
     position: absolute;
     z-index: 5;
     width: 52px;
-    height: 25px;
-    left: 503px;
-    top: 6px;
+    height: 50px;
+    left: 488px;
+    top: -17px;
     text-align: center;
     font-size: 25px;
     color: #fff;
@@ -136,9 +136,9 @@ body {
     position: absolute;
     z-index: 5;
     width: 52px;
-    height: 25px;
-    right: 507px;
-    top: 10px;
+    height: 50px;
+    right: 525px;
+    top: -17px;
     text-align: center;
     font-size: 25px;
     color: #fff;

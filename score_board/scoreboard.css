@@ -52,6 +52,7 @@ body {
         height:720px;
         background-image:url('imgs/aya_scoreboard_1.png');
         background-repeat: no-repeat;
+        background-size: contain;
 }
 
 #board4 {
@@ -62,6 +63,7 @@ body {
         height:720px;
         background-image:url('imgs/aya_scoreboard_2.png');
         background-repeat: no-repeat;
+        background-size: contain;
 }
 
 #board5 {
@@ -72,6 +74,7 @@ body {
         height:720px;
         background-image:url('imgs/aya_scoreboard_3.png');
         background-repeat: no-repeat;
+        background-size: contain;
 }
 
 #flags {

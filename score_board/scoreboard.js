@@ -198,8 +198,8 @@ function update() {
         currScore2 = scObj["pScore2"];
         currScore2 = currScore2 > 2 && scObj["bestOf"] == "bo3" ? 2 : currScore2;
         currBestOf = scObj["bestOf"];
-        document.getElementById("score1").innerHTML = "<img src='imgs/"+ currBestOf +"-"+ currScore1 +".png'>";
-        document.getElementById("score2").innerHTML = "<img src='imgs/"+ currBestOf +"-"+ currScore2 +".png'>";
+        document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png'>";
+        document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png'>";
 
         document.getElementById('stage').innerHTML = scObj['stage'];
 
@@ -263,7 +263,7 @@ function update() {
             currScore1 = scObj['pScore1'].toString();
             currScore1 = currScore1 > 2 && scObj["bestOf"] == "bo3" ? 2 : currScore1;
             TweenMax.to(document.getElementById('score1'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
-                document.getElementById("score1").innerHTML = "<img src='imgs/"+ scObj["bestOf"] +"-"+ currScore1 +".png'>";
+                document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png'>";
             }});
             TweenMax.to(document.getElementById('score1'),0.5,{opacity:1,ease:Quad.easeOut,delay:0.5,onComplete: function(){
                 animating--;
@@ -275,7 +275,7 @@ function update() {
             currScore2 = currScore2 > 2 && scObj["bestOf"] == "bo3" ? 2 : currScore2;
             currBestOf = scObj['bestOf'];
             TweenMax.to(document.getElementById('score2'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
-                document.getElementById("score2").innerHTML = "<img src='imgs/"+ scObj["bestOf"] +"-"+ currScore2 +".png'>";
+                document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png'>";
             }});
             TweenMax.to(document.getElementById('score2'),0.5,{opacity:1,ease:Quad.easeOut,delay:0.5,onComplete: function(){
                 animating--;

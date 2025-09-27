@@ -80,7 +80,7 @@ body {
         background-position: center;
 }
 
-#flags {
+/*#flags {
     position: absolute;
     z-index: 3;
     left: 197px;
@@ -88,10 +88,10 @@ body {
     width: 886;
     height: 31px;
     -webkit-mask-image: url("imgs/flagmask.png");
-    mask-image: url("imgs/flagmask.png");
+    mask-image: url("imgs/flagmask.png");*/
     /*background-image:url('imgs/flagmask.png');*/
 
-}
+/*}
 
 #flag1 {
     position: absolute;
@@ -109,7 +109,7 @@ body {
     height: 32px;
     top:0px;
     right:0;
-}
+}*/
 
 #score1 {
     position: absolute;

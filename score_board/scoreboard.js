@@ -98,6 +98,13 @@ function init() {
         delay: 0.7,
         yoyo:false
     });
+    TweenMax.to('#board5', 0.3, {
+        top:"0px",
+        repeat:0,
+        ease: Power2.Linear,
+        delay: 0,
+        yoyo:false
+    });
 
     //真下の行は、Xsplit専用の式。Xsplitでhtmlを60fpsとするのに必要。
     //ブラウザで動作チェックする分には、コメントアウトして頂いて問題ナッシング

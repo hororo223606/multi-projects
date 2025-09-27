@@ -70,7 +70,7 @@ body {
 
 #board5 {
         position:absolute; z-index: 3;
-        top:0px;
+        top:-50px;
         left:55px;
         width:170px;
         height:40px;

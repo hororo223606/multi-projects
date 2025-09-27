@@ -122,6 +122,15 @@ body {
     font-size: 25px;
     color: #fff;
 }
+
+#score1 img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 #score2 {
     position: absolute;
     z-index: 5;
@@ -132,6 +141,14 @@ body {
     text-align: center;
     font-size: 25px;
     color: #fff;
+}
+
+#score2 img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 #player1 {

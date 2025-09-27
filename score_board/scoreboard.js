@@ -198,8 +198,8 @@ function update() {
         currScore2 = scObj["pScore2"];
         currScore2 = currScore2 > 2 && scObj["bestOf"] == "bo3" ? 2 : currScore2;
         currBestOf = scObj["bestOf"];
-        document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png'>";
-        document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png'>";
+        document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png' style='position:absolute; top:10px; left:20px;'>";
+        document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png' style='position:absolute; top:10px; left:20px;'>";
 
         document.getElementById('stage').innerHTML = scObj['stage'];
 

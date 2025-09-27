@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'OpenSans-BoldItalic';
+    src: url('fonts/OpenSans-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 body {
     margin:0px;
     background-color: rgba(255, 255, 255, 0);
@@ -191,6 +198,7 @@ body {
     height: 30px;
     top: 5px;
     left: 55px; /*変更*/
+    font-family: 'OpenSans-BoldItalic', sans-serif;
     font-size: 14px;
     font-weight: normal;
     text-align: center;

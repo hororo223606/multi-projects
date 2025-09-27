@@ -194,14 +194,14 @@ body {
 #stage {
     position: absolute;
     z-index: 5;
-    width: 170px;
+    width: 100px;
     height: 30px;
     top: 5px;
-    left: 55px; /*変更*/
+    left: 110px; /*変更*/
     font-family: 'OpenSans-BoldItalic', sans-serif;
     font-size: 14px;
     font-weight: normal;
-    text-align: center;
+    text-align: left;
     text-transform: uppercase;
     color: #fff;
 }

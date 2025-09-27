@@ -100,7 +100,6 @@ body {
     height: 31px;
     top:0px;
     left:0px;
-    display: inline-block;
 }
 
 #flag2 {
@@ -110,7 +109,6 @@ body {
     height: 32px;
     top:0px;
     right:0;
-    display: inline-block;
 }
 
 #score1 {

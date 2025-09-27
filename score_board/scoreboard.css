@@ -87,8 +87,8 @@ body {
     top: 0px;
     width: 886;
     height: 31px;
-    -webkit-mask-image: url("imgs/flagmask.png");
-    mask-image: url("imgs/flagmask.png");
+    /*-webkit-mask-image: url("imgs/flagmask.png");*/
+    /*mask-image: url("imgs/flagmask.png");*/
     /*background-image:url('imgs/flagmask.png');*/
 
 }

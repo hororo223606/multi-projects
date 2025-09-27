@@ -43,22 +43,34 @@ body {
         /* background-image:url('imgs/scoreboard02_.png'); */
         background-repeat: no-repeat;
 }
+
 #board3 {
         position:absolute; z-index: 3;
         top:0px;
         left:200px;
         width:1280px;
         height:720px;
-        background-image:url('imgs/Scoreboard03.png');
+        background-image:url('imgs/aya_scoreboard_1.png');
         background-repeat: no-repeat;
 }
+
 #board4 {
         position:absolute; z-index: 3;
         top:0px;
         left:-200px;
         width:1280px;
         height:720px;
-        background-image:url('imgs/Scoreboard04.png');
+        background-image:url('imgs/aya_scoreboard_2.png');
+        background-repeat: no-repeat;
+}
+
+#board5 {
+        position:absolute; z-index: 3;
+        top:0px;
+        left:55px;
+        width:1280px;
+        height:720px;
+        background-image:url('imgs/aya_scoreboard_3.png');
         background-repeat: no-repeat;
 }
 

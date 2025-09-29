@@ -329,13 +329,24 @@ function loadFlags() {
     currCountry1 = getCountry(scObj["pCountry1"].toString());
     currCountry2 = getCountry(scObj["pCountry2"].toString());
 
-    document.getElementById("flag1").src = currCountry1
-        ? "GoSquared/expanded/" + currCountry1 + ".png"
-        : "GoSquared/expanded/transparent.png";
+    const flag1 = document.getElementById("flag1");
+    const flag2 = document.getElementById("flag2");
 
-    document.getElementById("flag2").src = currCountry2
-        ? "GoSquared/expanded/" + currCountry2 + ".png"
-        : "GoSquared/expanded/transparent.png";
+    if (currCountry1) {
+        flag1.src = "GoSquared/expanded/" + currCountry1 + ".png";
+        flag1.style.opacity = "1"; // 表示
+    } else {
+        flag1.src = ""; // 空に
+        flag1.style.opacity = "0"; // 完全に透明化
+    }
+
+    if (currCountry2) {
+        flag2.src = "GoSquared/expanded/" + currCountry2 + ".png";
+        flag2.style.opacity = "1";
+    } else {
+        flag2.src = "";
+        flag2.style.opacity = "0";
+    }
 }
 
 function getCountry (country) {

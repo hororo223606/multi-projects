@@ -2,6 +2,20 @@
     font-family: 'OpenSans-BoldItalic';
     src: url('fonts/OpenSans-BoldItalic.ttf') format('truetype');
     font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'OpenSans-Bold';
+    src: url('fonts/OpenSans-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Futehodo-MaruGothic';
+    src: url('fonts/Futehodo-MaruGothic.ttf') format('truetype');
+    font-weight: normal;
     font-style: normal;
 }
 
@@ -167,6 +181,7 @@ body {
     height: 30px;
     left: 350px;
     top: 10px;
+    font-family: 'Futehodo-MaruGothic', sans-serif;
     font-size: 18px;
     color: #fff;
     text-align: center;
@@ -176,8 +191,9 @@ body {
     z-index: 5;
     width: 200px;
     height: 30px;
-    right: 300px;
+    right: 275px;
     top: 10px;
+    font-family: 'Futehodo-MaruGothic', sans-serif;
     font-size: 18px;
     color: #fff;
     text-align: center;
@@ -188,10 +204,11 @@ body {
     z-index: 5;
     width: 100px;
     height: 30px;
-    left: 150px;
+    left: 300px;
     top: 10px;
+    font-family: 'OpenSans-Bold', sans-serif;
     font-size: 18px;
-    color: #fff;
+    color: #808080;
     text-align: center;
 }
 #team2 {
@@ -199,10 +216,11 @@ body {
     z-index: 5;
     width: 100px;
     height: 30px;
-    right: 450px;
+    right: 425px;
     top: 10px;
+    font-family: 'OpenSans-Bold', sans-serif;
     font-size: 18px;
-    color: #fff;
+    color: #808080;
     text-align: center;
 }
 

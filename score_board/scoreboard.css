@@ -99,7 +99,7 @@ body {
 #board5 {
         position:absolute; z-index: 3;
         top:-50px;
-        left:55px;
+        left:0px;
         width:170px;
         height:48px;
         background-image:url('imgs/aya_scoreboard_3_.png');
@@ -245,7 +245,7 @@ body {
     width: 100px;
     height: 30px;
     top: 5px;
-    left: 110px; /*変更*/
+    left: 55px; /*変更*/
     font-family: 'OpenSans-BoldItalic', sans-serif;
     font-size: 14px;
     font-weight: normal;

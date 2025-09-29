@@ -85,14 +85,14 @@ function init() {
         yoyo:false
     });
     TweenMax.to('#board3', 0.8, {
-        left:"220px",
+        left:"210px",
         repeat:0,
         ease: Power2.easeOut,
         delay: 0.7,
         yoyo:false
     });
     TweenMax.to('#board4', 0.8, {
-        left:"-220px",
+        left:"-210px",
         repeat:0,
         ease: Power2.easeOut,
         delay: 0.7,

@@ -19,6 +19,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'nicomoji-plus_v2-5';
+    src: url('fonts/nicomoji-plus_v2-5.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     margin:0px;
     background-color: rgba(255, 255, 255, 0);
@@ -181,7 +188,7 @@ body {
     height: 30px;
     left: 350px;
     top: 11px;
-    font-family: 'Futehodo-MaruGothic', sans-serif;
+    font-family: 'nicomoji-plus_v2-5', sans-serif;
     font-size: 18px;
     color: #fff;
     text-align: center;
@@ -193,7 +200,7 @@ body {
     height: 30px;
     right: 265px;
     top: 11px;
-    font-family: 'Futehodo-MaruGothic', sans-serif;
+    font-family: 'nicomoji-plus_v2-5', sans-serif;
     font-size: 18px;
     color: #fff;
     text-align: center;

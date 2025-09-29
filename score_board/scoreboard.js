@@ -326,13 +326,16 @@ function update() {
 }
 
 function loadFlags() {
+    currCountry1 = getCountry(scObj["pCountry1"].toString());
+    currCountry2 = getCountry(scObj["pCountry2"].toString());
 
-	currCountry1 = getCountry(scObj["pCountry1"].toString());
-	currCountry2 = getCountry(scObj["pCountry2"].toString());
+    document.getElementById("flag1").src = currCountry1
+        ? "GoSquared/expanded/" + currCountry1 + ".png"
+        : "GoSquared/expanded/transparent.png";
 
-	document.getElementById("flag1").src = "GoSquared/expanded/" + currCountry1 + ".png";
-	document.getElementById("flag2").src = "GoSquared/expanded/" + currCountry2 + ".png";
-
+    document.getElementById("flag2").src = currCountry2
+        ? "GoSquared/expanded/" + currCountry2 + ".png"
+        : "GoSquared/expanded/transparent.png";
 }
 
 function getCountry (country) {

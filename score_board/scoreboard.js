@@ -187,8 +187,8 @@ function update() {
 		document.getElementById("scoreboardintro").play();
         document.getElementById("scoreboardintro").onended = function() {};
         
-        currPlayer1 = scObj["pName1"].toString().toUpperCase();
-        currPlayer2 = scObj["pName2"].toString().toUpperCase();
+        currPlayer1 = scObj["pName1"].toString();
+        currPlayer2 = scObj["pName2"].toString();
             
         document.getElementById("player1").innerHTML = currPlayer1;
         document.getElementById("player2").innerHTML = currPlayer2;

@@ -165,8 +165,8 @@ body {
     z-index: 5;
     width: 200px;
     height: 30px;
-    left: 300px;
-    top: 3px;
+    left: 350px;
+    top: 10px;
     font-size: 18px;
     color: #fff;
     text-align: center;
@@ -177,7 +177,7 @@ body {
     width: 200px;
     height: 30px;
     right: 300px;
-    top: 3px;
+    top: 10px;
     font-size: 18px;
     color: #fff;
     text-align: center;
@@ -189,7 +189,7 @@ body {
     width: 100px;
     height: 30px;
     left: 150px;
-    top: 3px;
+    top: 10px;
     font-size: 18px;
     color: #fff;
     text-align: center;
@@ -200,7 +200,7 @@ body {
     width: 100px;
     height: 30px;
     right: 450px;
-    top: 3px;
+    top: 10px;
     font-size: 18px;
     color: #fff;
     text-align: center;

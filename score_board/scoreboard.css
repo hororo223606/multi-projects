@@ -121,10 +121,10 @@ body {
 #score1 {
     position: absolute;
     z-index: 5;
-    width: 52px;
-    height: 50px;
-    left: 489px;
-    top: -17px;
+    width: 60px;
+    height: 60px;
+    left: 512px;
+    top: -19px;
     text-align: center;
     font-size: 25px;
     color: #fff;
@@ -142,10 +142,10 @@ body {
 #score2 {
     position: absolute;
     z-index: 5;
-    width: 52px;
-    height: 50px;
-    right: 526px;
-    top: -17px;
+    width: 60px;
+    height: 60px;
+    right: 547px;
+    top: -19px;
     text-align: center;
     font-size: 25px;
     color: #fff;

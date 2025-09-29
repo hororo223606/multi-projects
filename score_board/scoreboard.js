@@ -244,18 +244,18 @@ function update() {
 			TweenMax.to(document.getElementById("flags"),1,{opacity:1,delay:1,onComplete:function(){animating--;}});
 		}
 
-		if (currPlayer1 != scObj["pName1"].toString().toUpperCase() || currPlayer2 != scObj["pName2"].toString().toUpperCase()) {
+		if (currPlayer1 != scObj["pName1"].toString() || currPlayer2 != scObj["pName2"].toString()) {
             animating++;
 
     		TweenMax.to(document.getElementById("player1"),0.5,{x:"+50",opacity:0,ease:Quad.easeIn,onComplete: function() {
-                currPlayer1 = scObj["pName1"].toString().toUpperCase();
+                currPlayer1 = scObj["pName1"].toString();
                 document.getElementById("player1").innerHTML = currPlayer1;
                 textFit(document.getElementsByClassName('player1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
             }});
             TweenMax.to(document.getElementById("player1"),0.5,{x:"-0",opacity:1,ease:Quad.easeOut,delay:0.5});
 
     		TweenMax.to(document.getElementById("player2"),0.5,{x:"-50",opacity:0,ease:Quad.easeIn,onComplete: function() {
-                currPlayer2 = scObj["pName2"].toString().toUpperCase();
+                currPlayer2 = scObj["pName2"].toString();
                 document.getElementById("player2").innerHTML = currPlayer2;
                 textFit(document.getElementsByClassName('player2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
             }});
@@ -265,6 +265,28 @@ function update() {
 
             switchCount = 0;
             currPlayerElement = "pName";
+    	}
+
+        if (currTeam1 != scObj["pTeam1"].toString() || currTeam2 != scObj["pTeam2"].toString()) {
+            animating++;
+
+    		TweenMax.to(document.getElementById("team1"),0.5,{x:"+50",opacity:0,ease:Quad.easeIn,onComplete: function() {
+                currTeam1 = scObj["pTeam1"].toString();
+                document.getElementById("team1").innerHTML = currTeam1;
+                textFit(document.getElementsByClassName('team1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+            }});
+            TweenMax.to(document.getElementById("team1"),0.5,{x:"-0",opacity:1,ease:Quad.easeOut,delay:0.5});
+
+    		TweenMax.to(document.getElementById("team2"),0.5,{x:"-50",opacity:0,ease:Quad.easeIn,onComplete: function() {
+                currTeam2 = scObj["pTeam2"].toString();
+                document.getElementById("team2").innerHTML = currTeam2;
+                textFit(document.getElementsByClassName('team2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+            }});
+            TweenMax.to(document.getElementById("team2"),0.5,{x:"+0",opacity:1,ease:Quad.easeOut,delay:0.5,onComplete:function(){
+                animating--;
+            }});
+
+            switchCount = 0;
     	}
 
         if (currScore1 != scObj["pScore1"].toString() || currBestOf != scObj["bestOf"]) {

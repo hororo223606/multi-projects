@@ -207,7 +207,7 @@ function update() {
         document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png' style='position:absolute; top:10px; left:20px;'>";
         document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png' style='position:absolute; top:10px; left:20px;'>";
 
-        document.getElementById('stage').innerHTML = scObj['stage'];
+        document.getElementById('stage').innerHTML = scObj['stage'] + "<br>" + scObj['bestOf'];
 
 
         TweenMax.from(document.getElementById("player1"),0.5,{x:"+50",opacity:0,delay:1.5});
@@ -227,7 +227,7 @@ function update() {
         TweenMax.from(document.getElementById('stage'),0.5,{opacity:0,delay:1.5,onComplete:function(){animating--;}});
 
         document.getElementById("container").style.display="block";
-        textFit(document.getElementsByClassName('stage'), {minFontSize:10, maxFontSize: 14,multiLine: false});
+        textFit(document.getElementsByClassName('stage'), {minFontSize:10, maxFontSize: 14,multiLine: true});
 
         textFit(document.getElementsByClassName('player1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
         textFit(document.getElementsByClassName('player2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
@@ -313,10 +313,10 @@ function update() {
             }});
         }
 
-        if (document.getElementById('stage').innerHTML != scObj['stage']) {
+        if (document.getElementById('stage').innerHTML != scObj['stage'] + "<br>" + scObj['bestOf']) {
             animating++;
             TweenMax.to(document.getElementById('stage'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
-                document.getElementById('stage').innerHTML = scObj['stage'];
+                document.getElementById('stage').innerHTML = scObj['stage'] + "<br>" + scObj['bestOf'];
                 textFit(document.getElementsByClassName('stage'), {minFontSize:10, maxFontSize: 14,multiLine: false});
             }});
             TweenMax.to(document.getElementById('stage'),0.5,{opacity:1,delay:0.5,ease:Quad.easeOut,onComplete: function(){

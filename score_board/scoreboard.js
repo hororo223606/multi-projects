@@ -200,13 +200,7 @@ function update() {
         document.getElementById("team2").innerHTML = currTeam2;
 
         currScore1 = scObj["pScore1"];
-        currScore1 = currScore1 > Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                   ? Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                   : currScore1;
         currScore2 = scObj["pScore2"];
-        currScore2 = currScore2 > Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                   ? Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                   : currScore2;
         currBestOf = scObj["bestOf"];
         document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png' style='position:absolute; top:10px; left:20px;'>";
         document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png' style='position:absolute; top:10px; left:20px;'>";

@@ -3,16 +3,16 @@
  <toolBar>
   <label>Best of</label>
   <comboBox id="bestOf" width="50">
-    <comboItem value="bo3">1</comboItem>
+    <comboItem value="bo1">1</comboItem>
     <comboItem value="bo3">3</comboItem>
     <comboItem value="bo5">5</comboItem>
-    <comboItem value="bo5">7</comboItem>
-    <comboItem value="bo5">9</comboItem>
-    <comboItem value="bo5">11</comboItem>
-    <comboItem value="bo3">13</comboItem>
-    <comboItem value="bo5">15</comboItem>
-    <comboItem value="bo5">17</comboItem>
-    <comboItem value="bo5">19</comboItem>
+    <comboItem value="bo7">7</comboItem>
+    <comboItem value="bo9">9</comboItem>
+    <comboItem value="bo11">11</comboItem>
+    <comboItem value="bo13">13</comboItem>
+    <comboItem value="bo15">15</comboItem>
+    <comboItem value="bo17">17</comboItem>
+    <comboItem value="bo19">19</comboItem>
   </comboBox>
  </toolBar>
  <tab name="Match">

@@ -215,7 +215,7 @@ body {
     top: 10px;
     font-family: 'OpenSans-Bold', sans-serif;
     font-size: 18px;
-    color: #808080;
+    color: #b3cdff; /*b3cdff*/
     text-align: center;
 }
 #team2 {
@@ -227,7 +227,7 @@ body {
     top: 10px;
     font-family: 'OpenSans-Bold', sans-serif;
     font-size: 18px;
-    color: #808080;
+    color: #ffb3d1; /*ffb3d1*/
     text-align: center;
 }
 

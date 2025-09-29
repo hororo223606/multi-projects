@@ -290,9 +290,6 @@ function update() {
         if (currScore1 != scObj["pScore1"].toString() || currBestOf != scObj["bestOf"]) {
             animating++;
             currScore1 = scObj['pScore1'].toString();
-            currScore1 = currScore1 > Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                       ? Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                       : currScore1;
             TweenMax.to(document.getElementById('score1'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
                 document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png'>";
             }});
@@ -303,9 +300,6 @@ function update() {
         if (currScore2 != scObj["pScore2"].toString() || currBestOf != scObj["bestOf"]) {
             animating++;
             currScore2 = scObj['pScore2'].toString();
-            currScore2 = currScore2 > Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                       ? Math.floor((parseInt(scObj["bestOf"].replace("bo", ""), 10) + 1) / 2)
-                       : currScore2;
             currBestOf = scObj['bestOf'];
             TweenMax.to(document.getElementById('score2'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
                 document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png'>";

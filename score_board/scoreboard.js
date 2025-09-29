@@ -294,7 +294,7 @@ function update() {
             animating++;
             currScore1 = scObj['pScore1'].toString();
             TweenMax.to(document.getElementById('score1'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
-                document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png'>";
+                document.getElementById("score1").innerHTML = "<img src='imgs/"+ currScore1 +"b.png' style='position:absolute; top:10px; left:20px;'>";
             }});
             TweenMax.to(document.getElementById('score1'),0.5,{opacity:1,ease:Quad.easeOut,delay:0.5,onComplete: function(){
                 animating--;
@@ -305,7 +305,7 @@ function update() {
             currScore2 = scObj['pScore2'].toString();
             currBestOf = scObj['bestOf'];
             TweenMax.to(document.getElementById('score2'),0.5,{opacity:0,ease:Quad.easeIn,onComplete: function() {
-                document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore2 +"r.png'>";
+                document.getElementById("score2").innerHTML = "<img src='imgs/"+ currScore1 +"b.png' style='position:absolute; top:10px; left:20px;'>";
             }});
             TweenMax.to(document.getElementById('score2'),0.5,{opacity:1,ease:Quad.easeOut,delay:0.5,onComplete: function(){
                 animating--;

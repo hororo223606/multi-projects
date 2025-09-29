@@ -220,7 +220,7 @@ function update() {
         TweenMax.from(document.getElementById("score1"),0.5,{opacity:0,delay:1.5});
         TweenMax.from(document.getElementById("score2"),0.5,{opacity:0,delay:1.5});
 
-        //loadFlags();
+        loadFlags();
 
         TweenMax.from(document.getElementById("flag1"),0.5,{opacity:0,delay:1.5});
         TweenMax.from(document.getElementById("flag2"),0.5,{opacity:0,delay:1.5});
@@ -240,7 +240,7 @@ function update() {
 		if (currCountry1 != getCountry(scObj["pCountry1"].toString()) || currCountry2 != getCountry(scObj["pCountry2"].toString())) {
             animating++;
 			TweenMax.to(document.getElementById("flags"),1,{opacity:0,onComplete: function() {
-				//loadFlags();
+				loadFlags();
 			}});
 			TweenMax.to(document.getElementById("flags"),1,{opacity:1,delay:1,onComplete:function(){animating--;}});
 		}

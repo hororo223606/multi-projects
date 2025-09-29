@@ -212,9 +212,9 @@ body {
     width: 100px;
     height: 30px;
     left: 300px;
-    top: 10px;
+    top: 14px;
     font-family: 'OpenSans-Bold', sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     color: #b3cdff; /*b3cdff*/
     text-align: center;
 }
@@ -224,9 +224,9 @@ body {
     width: 100px;
     height: 30px;
     right: 415px;
-    top: 10px;
+    top: 14px;
     font-family: 'OpenSans-Bold', sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     color: #ffb3d1; /*ffb3d1*/
     text-align: center;
 }

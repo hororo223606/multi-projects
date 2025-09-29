@@ -183,6 +183,29 @@ body {
     text-align: center;
 }
 
+#team1 {
+    position: absolute;
+    z-index: 5;
+    width: 100px;
+    height: 30px;
+    left: 450px;
+    top: 3px;
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
+}
+#team2 {
+    position: absolute;
+    z-index: 5;
+    width: 100px;
+    height: 30px;
+    right: 150px;
+    top: 3px;
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
+}
+
 #scoreboardintro {
     position: absolute;
     top:0px;

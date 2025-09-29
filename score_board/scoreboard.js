@@ -193,6 +193,12 @@ function update() {
         document.getElementById("player1").innerHTML = currPlayer1;
         document.getElementById("player2").innerHTML = currPlayer2;
 
+        currTeam1 = scObj["pTeam1"].toString();
+        currTeam2 = scObj["pTeam2"].toString();
+            
+        document.getElementById("team1").innerHTML = currTeam1;
+        document.getElementById("team2").innerHTML = currTeam2;
+
         currScore1 = scObj["pScore1"];
         currScore1 = currScore1 > 2 && scObj["bestOf"] == "bo3" ? 2 : currScore1;
         currScore2 = scObj["pScore2"];
@@ -206,6 +212,9 @@ function update() {
 
         TweenMax.from(document.getElementById("player1"),0.5,{x:"+50",opacity:0,delay:1.5});
         TweenMax.from(document.getElementById("player2"),0.5,{x:"-50",opacity:0,delay:1.5});
+
+        TweenMax.from(document.getElementById("team1"),0.5,{x:"+50",opacity:0,delay:1.5});
+        TweenMax.from(document.getElementById("team2"),0.5,{x:"-50",opacity:0,delay:1.5});
 
         TweenMax.from(document.getElementById("score1"),0.5,{opacity:0,delay:1.5});
         TweenMax.from(document.getElementById("score2"),0.5,{opacity:0,delay:1.5});

@@ -19,6 +19,9 @@ var scObj;
 var currPlayer1;
 var currPlayer2;
 
+var currTeam1;
+var currTeam2;
+
 var currScore1;
 var currScore2;
 

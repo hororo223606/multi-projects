@@ -169,7 +169,7 @@ function scLoaded() {
 		timestampOld = timestamp;
 		timestamp = scObj["timestamp"];
 		//console.log(timestamp);
-        if (timestamp != timestampOld && animating == 0 || firstupdate) {
+        if ((timestamp != timestampOld && animating == 0) || firstupdate) {
             update();
         } else if(animating == 0 && switchCount > 10) {
             switchTagTwitter();

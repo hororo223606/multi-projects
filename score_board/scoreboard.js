@@ -185,10 +185,10 @@ function alignTeamAndPlayerCenters() {
     const team2 = document.getElementById("team2");
     const player2 = document.getElementById("player2");
 
-    gap = 20
+    gap = 10
     // 左右それぞれの中央基準座標
-    const centerLeft = 400;   // 青側の中央
-    const centerRight = 880;  // ピンク側の中央
+    const centerLeft = 420;   // 青側の中央
+    const centerRight = 860;  // ピンク側の中央
 
     // チーム名のテキストが空でない場合だけ gap を有効にする
     const widthTeam1 = team1.innerText.trim() ? team1.offsetWidth : 0;

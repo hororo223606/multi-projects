@@ -185,35 +185,37 @@ function alignTeamAndPlayerCenters() {
     const team2 = document.getElementById("team2");
     const player2 = document.getElementById("player2");
 
-    // 左右それぞれの基準となる中央座標（固定値）
-    const centerLeft = 450;   // 青側の中央基準
-    const centerRight = 830;  // ピンク側の中央基準
+    gap = 20
+    // 左右それぞれの中央基準座標
+    const centerLeft = 400;   // 青側の中央
+    const centerRight = 880;  // ピンク側の中央
 
-    // 各要素の幅を測定（非表示でも width が取れるように一時的に表示）
+    // チーム名のテキストが空でない場合だけ gap を有効にする
     const widthTeam1 = team1.innerText.trim() ? team1.offsetWidth : 0;
     const widthPlayer1 = player1.offsetWidth;
-    const totalWidth1 = widthTeam1 + widthPlayer1;
+    const totalWidth1 = widthTeam1 > 0 ? widthTeam1 + gap + widthPlayer1 : widthPlayer1;
 
     const widthTeam2 = team2.innerText.trim() ? team2.offsetWidth : 0;
     const widthPlayer2 = player2.offsetWidth;
-    const totalWidth2 = widthTeam2 + widthPlayer2;
+    const totalWidth2 = widthTeam2 > 0 ? widthTeam2 + gap + widthPlayer2 : widthPlayer2;
 
-    // 左右グループの中央位置を計算（それぞれの左端を決定）
+    // 左右グループの左端座標を決定（全体中央が centerLeft / centerRight に来るように）
     const leftGroupStart = centerLeft - totalWidth1 / 2;
     const rightGroupStart = centerRight - totalWidth2 / 2;
 
-    // team → player の順に並べる（横方向位置調整）
+    // スタイル調整
     team1.style.position = "absolute";
-    team1.style.left = leftGroupStart + "px";
-
     player1.style.position = "absolute";
-    player1.style.left = (leftGroupStart + widthTeam1) + "px";
-
     team2.style.position = "absolute";
-    team2.style.left = rightGroupStart + "px";
-
     player2.style.position = "absolute";
-    player2.style.left = (rightGroupStart + widthTeam2) + "px";
+
+    // 左側：team → player
+    team1.style.left = leftGroupStart + "px";
+    player1.style.left = (leftGroupStart + widthTeam1 + (widthTeam1 > 0 ? gap : 0)) + "px";
+
+    // 右側：team → player
+    team2.style.left = rightGroupStart + "px";
+    player2.style.left = (rightGroupStart + widthTeam2 + (widthTeam2 > 0 ? gap : 0)) + "px";
 }
 
 function update() {

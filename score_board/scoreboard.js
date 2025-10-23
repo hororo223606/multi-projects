@@ -179,6 +179,43 @@ function scLoaded() {
 	}
 }
 
+function alignTeamAndPlayerCenters() {
+    const team1 = document.getElementById("team1");
+    const player1 = document.getElementById("player1");
+    const team2 = document.getElementById("team2");
+    const player2 = document.getElementById("player2");
+
+    // 左右それぞれの基準となる中央座標（固定値）
+    const centerLeft = 450;   // 青側の中央基準
+    const centerRight = 830;  // ピンク側の中央基準
+
+    // 各要素の幅を測定（非表示でも width が取れるように一時的に表示）
+    const widthTeam1 = team1.innerText.trim() ? team1.offsetWidth : 0;
+    const widthPlayer1 = player1.offsetWidth;
+    const totalWidth1 = widthTeam1 + widthPlayer1;
+
+    const widthTeam2 = team2.innerText.trim() ? team2.offsetWidth : 0;
+    const widthPlayer2 = player2.offsetWidth;
+    const totalWidth2 = widthTeam2 + widthPlayer2;
+
+    // 左右グループの中央位置を計算（それぞれの左端を決定）
+    const leftGroupStart = centerLeft - totalWidth1 / 2;
+    const rightGroupStart = centerRight - totalWidth2 / 2;
+
+    // team → player の順に並べる（横方向位置調整）
+    team1.style.position = "absolute";
+    team1.style.left = leftGroupStart + "px";
+
+    player1.style.position = "absolute";
+    player1.style.left = (leftGroupStart + widthTeam1) + "px";
+
+    team2.style.position = "absolute";
+    team2.style.left = rightGroupStart + "px";
+
+    player2.style.position = "absolute";
+    player2.style.left = (rightGroupStart + widthTeam2) + "px";
+}
+
 function update() {
     
 	var datetime = new Date();
@@ -232,6 +269,10 @@ function update() {
 
         textFit(document.getElementsByClassName('player1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
         textFit(document.getElementsByClassName('player2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+        textFit(document.getElementsByClassName('team1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+        textFit(document.getElementsByClassName('team2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+
+        alignTeamAndPlayerCenters();
 
         firstupdate = false;
 
@@ -252,6 +293,7 @@ function update() {
                 currPlayer1 = scObj["pName1"].toString();
                 document.getElementById("player1").innerHTML = currPlayer1;
                 textFit(document.getElementsByClassName('player1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+                alignTeamAndPlayerCenters();
             }});
             TweenMax.to(document.getElementById("player1"),0.5,{x:"-0",opacity:1,ease:Quad.easeOut,delay:0.5});
 
@@ -259,6 +301,7 @@ function update() {
                 currPlayer2 = scObj["pName2"].toString();
                 document.getElementById("player2").innerHTML = currPlayer2;
                 textFit(document.getElementsByClassName('player2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+                alignTeamAndPlayerCenters();
             }});
             TweenMax.to(document.getElementById("player2"),0.5,{x:"+0",opacity:1,ease:Quad.easeOut,delay:0.5,onComplete:function(){
                 animating--;
@@ -275,6 +318,7 @@ function update() {
                 currTeam1 = scObj["pTeam1"].toString();
                 document.getElementById("team1").innerHTML = currTeam1;
                 textFit(document.getElementsByClassName('team1'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+                alignTeamAndPlayerCenters();
             }});
             TweenMax.to(document.getElementById("team1"),0.5,{x:"-0",opacity:1,ease:Quad.easeOut,delay:0.5});
 
@@ -282,6 +326,7 @@ function update() {
                 currTeam2 = scObj["pTeam2"].toString();
                 document.getElementById("team2").innerHTML = currTeam2;
                 textFit(document.getElementsByClassName('team2'), {minFontSize:14, maxFontSize: 20,multiLine: false});
+                alignTeamAndPlayerCenters();
             }});
             TweenMax.to(document.getElementById("team2"),0.5,{x:"+0",opacity:1,ease:Quad.easeOut,delay:0.5,onComplete:function(){
                 animating--;

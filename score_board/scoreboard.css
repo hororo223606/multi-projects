@@ -187,9 +187,9 @@ body {
 #player1 {
     position: absolute;
     z-index: 5;
-    width: 200px;
+    /*width: 200px;*/
     height: 30px;
-    left: 350px;
+    /*left: 350px;*/
     top: 13px;
     font-family: 'nicomoji-plus_v2-5', sans-serif;
     font-size: 18px;
@@ -199,9 +199,9 @@ body {
 #player2 {
     position: absolute;
     z-index: 5;
-    width: 200px;
+    /*width: 200px;*/
     height: 30px;
-    right: 265px;
+    /*right: 265px;*/
     top: 13px;
     font-family: 'nicomoji-plus_v2-5', sans-serif;
     font-size: 18px;
@@ -212,9 +212,9 @@ body {
 #team1 {
     position: absolute;
     z-index: 5;
-    width: 100px;
+    /*width: 100px;*/
     height: 30px;
-    left: 300px;
+    /*left: 300px;*/
     top: 14px;
     font-family: 'OpenSans-Bold', sans-serif;
     font-size: 14px;
@@ -224,9 +224,9 @@ body {
 #team2 {
     position: absolute;
     z-index: 5;
-    width: 100px;
+    /*width: 100px;*/
     height: 30px;
-    right: 415px;
+    /*right: 415px;*/
     top: 14px;
     font-family: 'OpenSans-Bold', sans-serif;
     font-size: 14px;

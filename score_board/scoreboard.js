@@ -187,8 +187,8 @@ function alignTeamAndPlayerCenters() {
 
     gap = 10
     // 左右それぞれの中央基準座標
-    const centerLeft = 420;   // 青側の中央
-    const centerRight = 860;  // ピンク側の中央
+    const centerLeft = 415;   // 青側の中央
+    const centerRight = 865;  // ピンク側の中央
 
     // チーム名のテキストが空でない場合だけ gap を有効にする
     const widthTeam1 = team1.innerText.trim() ? team1.offsetWidth : 0;

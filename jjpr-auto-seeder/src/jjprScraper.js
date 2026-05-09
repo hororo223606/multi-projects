@@ -215,208 +215,115 @@ class JjprScraper {
   }
 
   async captureRows() {
-    const candidates = await this.page.evaluate(() => {
-      const isVisible = (el) => {
-        const style = window.getComputedStyle(el);
-        const rect = el.getBoundingClientRect();
+    const rawBodyText = await this.page.locator('body').innerText({ timeout: 10000 }).catch(() => '');
 
-        return (
-          style.visibility !== 'hidden' &&
-          style.display !== 'none' &&
-          rect.width > 0 &&
-          rect.height > 0
-        );
-      };
+    const normalizedText = String(rawBodyText || '')
+      .replace(/\r/g, '\n')
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{2,}/g, '\n')
+      .trim();
 
-      const cleanText = (value) => String(value || '')
+    const rows = [];
+
+    // 例:
+    // 355th UTeS | ほろろ 91,492pt
+    // 638th ハル 46,052pt
+    //
+    // 改行をまたぐ場合:
+    // 638th ハル
+    // 46,052pt
+    const regex = /(\d{1,6})(?:st|nd|rd|th|位)\s+([\s\S]*?)\s+([\d,]+)\s*pt\b/gi;
+
+    let match;
+
+    while ((match = regex.exec(normalizedText)) !== null) {
+      const rank = Number(match[1]);
+      let playerName = String(match[2] || '')
         .replace(/\s+/g, ' ')
         .trim();
 
-      const countMatches = (text, regex) => {
-        const matches = String(text || '').match(regex);
-        return matches ? matches.length : 0;
-      };
+      const points = Number(String(match[3] || '').replace(/,/g, ''));
 
-      const out = [];
-      const seen = new Set();
+      // 余計なUI文言が混ざった場合の保険
+      playerName = this.cleanPlayerName(playerName);
 
-      const push = (rawText, cells = []) => {
-        const raw = cleanText(rawText);
+      if (!Number.isFinite(rank)) continue;
+      if (!playerName) continue;
 
-        if (!raw) return;
-        if (raw.length > 250) return;
+      const rawText = `${rank}th ${playerName} ${String(match[3] || '').trim()}pt`;
 
-        const englishRankCount = countMatches(raw, /\b\d{1,6}(?:st|nd|rd|th)\b/gi);
-        const japaneseRankCount = countMatches(raw, /\b\d{1,6}位\b/g);
-        const pointCount = countMatches(raw, /[\d,]+\s*pt\b/gi);
-
-        const rankCount = englishRankCount + japaneseRankCount;
-
-        if (rankCount !== 1 || pointCount !== 1) return;
-
-        const looksLikeJjprResult =
-          /\b\d{1,6}(?:st|nd|rd|th)\b/i.test(raw) &&
-          /[\d,]+\s*pt\b/i.test(raw);
-
-        const looksLikeJapaneseRank =
-          /\b\d{1,6}位\b/.test(raw) &&
-          /[\d,]+\s*pt\b/i.test(raw);
-
-        if (!looksLikeJjprResult && !looksLikeJapaneseRank) return;
-
-        if (seen.has(raw)) return;
-        seen.add(raw);
-
-        out.push({
-          rawText: raw,
-          cells: cells.map(cleanText).filter(Boolean),
-        });
-      };
-
-      document.querySelectorAll('table tr').forEach((tr) => {
-        if (!isVisible(tr)) return;
-
-        const cells = Array.from(tr.querySelectorAll('th,td'))
-          .map((cell) => cleanText(cell.innerText || cell.textContent));
-
-        push(cleanText(tr.innerText || tr.textContent), cells);
+      rows.push({
+        rank,
+        playerName,
+        points,
+        rawText,
+        cells: [rawText],
       });
+    }
 
-      document.querySelectorAll('[role="row"]').forEach((row) => {
-        if (!isVisible(row)) return;
-
-        const cells = Array.from(row.querySelectorAll('[role="cell"],[role="gridcell"],[role="columnheader"]'))
-          .map((cell) => cleanText(cell.innerText || cell.textContent));
-
-        push(cleanText(row.innerText || row.textContent), cells);
-      });
-
-      document.querySelectorAll('body *').forEach((el) => {
-        if (!isVisible(el)) return;
-
-        const raw = cleanText(el.innerText || el.textContent);
-
-        push(raw, [raw]);
-      });
-
-      const lines = String(document.body?.innerText || '')
-        .split('\n')
-        .map(cleanText)
-        .filter(Boolean);
-
-      lines.forEach((line) => push(line, [line]));
-
-      return out;
-    });
-
-    return candidates
-      .map((candidate) => this.parseCandidateRow(candidate))
-      .filter((row) => row.rawText)
-      .filter((row) => Number.isFinite(row.rank))
-      .filter((row) => row.playerName);
+    return this.uniqueRows(rows);
   }
 
   parseCandidateRow(row) {
-    const cells = row.cells || [];
-    const rawText = String(row.rawText || cells.join(' '))
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    let rank = null;
-    let playerName = '';
-    let points = null;
-
-    let match = rawText.match(/^(\d{1,6})(?:st|nd|rd|th)\s+(.+?)\s+([\d,]+)\s*pt\b/i);
-
-    if (match) {
-      rank = Number(match[1]);
-      playerName = String(match[2] || '').replace(/\s+/g, ' ').trim();
-      points = Number(match[3].replace(/,/g, ''));
-
-      return {
-        rank,
-        playerName,
-        points,
-        rawText,
-        cells,
-      };
-    }
-
-    match = rawText.match(/^(\d{1,6})位\s+(.+?)\s+([\d,]+)\s*pt\b/i);
-
-    if (match) {
-      rank = Number(match[1]);
-      playerName = String(match[2] || '').replace(/\s+/g, ' ').trim();
-      points = Number(match[3].replace(/,/g, ''));
-
-      return {
-        rank,
-        playerName,
-        points,
-        rawText,
-        cells,
-      };
-    }
-
-    for (const cell of cells) {
-      const rankMatch =
-        String(cell).match(/^#?\s*(\d{1,6})(?:st|nd|rd|th|位)?$/i) ||
-        String(cell).match(/(?:順位|Rank|#)\s*(\d{1,6})/i);
-
-      if (rankMatch) {
-        rank = Number(rankMatch[1]);
-        break;
-      }
-    }
-
-    if (rank === null) {
-      const rankMatch =
-        rawText.match(/^#?\s*(\d{1,6})(?:st|nd|rd|th|位)?\b/i) ||
-        rawText.match(/(?:順位|Rank|#)\s*(\d{1,6})/i);
-
-      if (rankMatch) {
-        rank = Number(rankMatch[1]);
-      }
-    }
-
-    const pointMatch = rawText.match(/([\d,]+)\s*pt\b/i);
-
-    if (pointMatch) {
-      points = Number(pointMatch[1].replace(/,/g, ''));
-    }
-
-    playerName = this.extractNameFromRaw(rawText);
-
-    return {
-      rank,
-      playerName,
-      points,
-      rawText,
-      cells,
-    };
+    return row;
   }
 
-  extractNameFromRaw(rawText) {
-    const text = String(rawText || '')
+  cleanPlayerName(value) {
+    let name = String(value || '')
       .replace(/\s+/g, ' ')
       .trim();
 
-    let match = text.match(/^\d{1,6}(?:st|nd|rd|th)\s+(.+?)\s+[\d,]+\s*pt\b/i);
-
-    if (match) {
-      return String(match[1] || '').trim();
-    }
-
-    match = text.match(/^\d{1,6}位\s+(.+?)\s+[\d,]+\s*pt\b/i);
-
-    if (match) {
-      return String(match[1] || '').trim();
-    }
-
-    return text
-      .replace(/^\d{1,6}(?:st|nd|rd|th|位)?\s*/i, '')
-      .replace(/[\d,]+\s*pt$/i, '')
+    // 検索欄やボタン文言が混ざった場合の保険
+    name = name
+      .replace(/^検索\s*/g, '')
+      .replace(/^クリア\s*/g, '')
+      .replace(/^csv出力\s*/gi, '')
       .trim();
+
+    // 前後に余計な改行由来の文言が入った場合、最後の短い塊を優先する
+    const badMarkers = [
+      '計算ルール',
+      '対象大会条件',
+      '対象大会一覧',
+      '対象予定大会一覧',
+      '算出日時',
+    ];
+
+    for (const marker of badMarkers) {
+      if (name.includes(marker)) {
+        const parts = name
+          .split(marker)
+          .map((part) => part.trim())
+          .filter(Boolean);
+
+        if (parts.length > 0) {
+          name = parts[parts.length - 1];
+        }
+      }
+    }
+
+    return name.trim();
+  }
+
+  uniqueRows(rows) {
+    const seen = new Set();
+    const out = [];
+
+    for (const row of rows) {
+      const key = `${row.rank || ''}::${normalizeName(row.playerName || '')}`;
+
+      if (seen.has(key)) continue;
+
+      seen.add(key);
+      out.push(row);
+    }
+
+    return out.sort((a, b) => {
+      const rankA = Number.isFinite(a.rank) ? a.rank : Number.MAX_SAFE_INTEGER;
+      const rankB = Number.isFinite(b.rank) ? b.rank : Number.MAX_SAFE_INTEGER;
+
+      return rankA - rankB;
+    });
   }
 }
 

@@ -177,7 +177,7 @@
       <input id="venueColumn" type="text" value="Venue Type" />
 
       <label for="venueValues">シード対象のVenue type</label>
-      <input id="venueValues" type="text" value="competitor,competiter" />
+      <input id="venueValues" type="text" value="competitor" />
 
       <button id="runButton">シードを作成</button>
       <button id="downloadButton" disabled>結果CSVをダウンロード</button>
@@ -771,7 +771,7 @@
           tagColumn: tagColumnEl.value || 'Short GamerTag',
           exactColumn: exactColumnEl.value || 'GamerTag',
           venueColumn: venueColumnEl.value || 'Venue Type',
-          venueValues: venueValuesEl.value || 'competitor,competiter',
+          venueValues: venueValuesEl.value || 'competitor',
         });
 
         const seedResult = buildInitialSeeding({

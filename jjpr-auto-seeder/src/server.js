@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const multer = require('multer');
 const { JjprScraper, DEFAULT_JJPR_URL } = require('./jjprScraper');
 const { buildSeedRows, rowsToCsv, DEFAULT_TAG_COLUMN, DEFAULT_VENUE_TYPE_COLUMN, DEFAULT_INCLUDED_VENUE_TYPES } = require('./csvSeeder');
@@ -7,7 +8,11 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 const port = process.env.PORT || 3000;
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
+
+app.get('/health', (req, res) => {
+  res.status(200).send('ok');
+});
 
 app.post('/api/seed', upload.single('file'), async (req, res) => {
   if (!req.file) {
@@ -40,6 +45,6 @@ app.post('/api/seed', upload.single('file'), async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`JJPR auto seeder running on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`JJPR auto seeder running on port ${port}`);
 });

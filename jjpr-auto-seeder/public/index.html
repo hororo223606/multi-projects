@@ -89,7 +89,7 @@ form.addEventListener('submit', async (event) => {
   table.querySelector('tbody').innerHTML = '';
 
   const fd = new FormData(form);
-  const res = await fetch('/api/seed', { method: 'POST', body: fd });
+  const res = await fetch('api/seed', { method: 'POST', body: fd });
   const data = await res.json().catch(() => null);
   if (!res.ok) {
     statusEl.textContent = data?.error || 'エラーが発生しました。';

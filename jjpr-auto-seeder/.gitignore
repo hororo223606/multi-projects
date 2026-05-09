@@ -6,3 +6,5 @@ output/*.csv
 input/*.csv
 !input/.gitkeep
 !output/.gitkeep
+output/
+.env

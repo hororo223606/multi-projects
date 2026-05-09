@@ -55,6 +55,52 @@
       letter-spacing: -0.03em;
     }
 
+    .settings-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .settings-toggle {
+      min-width: 132px;
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .settings-toggle:hover {
+      background: #1d4ed8;
+    }
+
+    .settings-summary {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .settings-panel {
+      display: block;
+    }
+
+    .settings-panel.is-hidden {
+      display: none;
+    }
+
+    body.settings-hidden .topbar {
+      padding-bottom: 10px;
+    }
+
     .controls {
       display: grid;
       grid-template-columns: 1.25fr repeat(2, minmax(160px, 0.7fr));
@@ -328,6 +374,8 @@
 
     @media (max-width: 980px) {
       header { position: static; }
+      .settings-bar { align-items: stretch; flex-direction: column; }
+      .settings-summary { white-space: normal; }
       .controls,
       .station-controls,
       .lists { grid-template-columns: 1fr; }
@@ -338,7 +386,8 @@
     @media print {
       header { position: static; backdrop-filter: none; }
       body { background: #fff; }
-      .status-wrap, .note { display: none; }
+      .status-wrap, .note, .settings-bar { display: none; }
+      .settings-panel.is-hidden { display: block; }
       .lists { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .table-wrap { max-height: none; overflow: visible; min-height: 0; }
       .roster-card { box-shadow: none; }
@@ -351,7 +400,13 @@
     <div class="topbar">
       <h1>参加者名簿</h1>
 
-      <div class="controls" aria-label="CSVと参加費の入力">
+      <div class="settings-bar" aria-label="設定パネルの表示切り替え">
+        <button id="settingsToggleButton" class="settings-toggle" type="button" aria-expanded="true" aria-controls="settingsPanel">設定を隠す</button>
+        <div id="settingsSummary" class="settings-summary">CSV未選択 / 一般枠: 未入力 / 持参枠: 未入力 / 台番号上限: 未設定</div>
+      </div>
+
+      <div id="settingsPanel" class="settings-panel">
+        <div class="controls" aria-label="CSVと参加費の入力">
         <label class="control-card">
           <span>
             <strong>参加者CSV</strong>
@@ -407,6 +462,7 @@
           </span>
           <button id="resetRosterButton" type="button">名簿状態をリセット</button>
         </div>
+      </div>
       </div>
     </div>
   </header>
@@ -480,6 +536,9 @@
     const elements = {
       csvInput: document.getElementById('csvInput'),
       csvStatus: document.getElementById('csvStatus'),
+      settingsPanel: document.getElementById('settingsPanel'),
+      settingsToggleButton: document.getElementById('settingsToggleButton'),
+      settingsSummary: document.getElementById('settingsSummary'),
       generalFeeInput: document.getElementById('generalFeeInput'),
       bringFeeInput: document.getElementById('bringFeeInput'),
       stationMaxInput: document.getElementById('stationMaxInput'),
@@ -697,6 +756,38 @@
       elements.bringFeeInput.value = localStorage.getItem(settingKey('bringFee')) || '';
       elements.stationMaxInput.value = localStorage.getItem(settingKey('stationMax')) || '';
       elements.reservedStationsInput.value = localStorage.getItem(settingKey('reservedStations')) || '';
+      setSettingsHidden(localStorage.getItem(settingKey('settingsHidden')) === '1', false);
+    }
+
+    function getCurrentFileLabel() {
+      return currentFileName || 'CSV未選択';
+    }
+
+    function renderSettingsSummary() {
+      const max = getStationMax();
+      const reserved = getReservedStations();
+      const generalCount = participants.filter((participant) => participant.feeType === '一般枠').length;
+      const bringCount = participants.filter((participant) => participant.feeType === '持参枠').length;
+      const participantSummary = participants.length > 0 ? ` / 名簿: 一般枠 ${generalCount}名・持参枠 ${bringCount}名` : '';
+      const reservedSummary = reserved.size > 0 ? ` / スタッフ使用: ${[...reserved].sort((a, b) => a - b).join(',')}` : '';
+
+      elements.settingsSummary.textContent = [
+        getCurrentFileLabel(),
+        `一般枠: ${formatYen(elements.generalFeeInput.value)}`,
+        `持参枠: ${formatYen(elements.bringFeeInput.value)}`,
+        `台番号上限: ${max > 0 ? max : '未設定'}`,
+      ].join(' / ') + reservedSummary + participantSummary;
+    }
+
+    function setSettingsHidden(hidden, persist = true) {
+      elements.settingsPanel.classList.toggle('is-hidden', hidden);
+      document.body.classList.toggle('settings-hidden', hidden);
+      elements.settingsToggleButton.textContent = hidden ? '設定を表示' : '設定を隠す';
+      elements.settingsToggleButton.setAttribute('aria-expanded', String(!hidden));
+      if (persist) {
+        localStorage.setItem(settingKey('settingsHidden'), hidden ? '1' : '0');
+      }
+      renderSettingsSummary();
     }
 
     function loadRosterStateForParticipants() {
@@ -850,6 +941,7 @@
       renderFees();
       renderRoster('一般枠', elements.generalBody, elements.generalSummary);
       renderRoster('持参枠', elements.bringBody, elements.bringSummary);
+      renderSettingsSummary();
     }
 
     async function readCsvFile(file) {
@@ -922,11 +1014,13 @@
       if (event.target === elements.generalFeeInput) {
         localStorage.setItem(settingKey('generalFee'), event.target.value);
         renderFees();
+        renderSettingsSummary();
         return;
       }
       if (event.target === elements.bringFeeInput) {
         localStorage.setItem(settingKey('bringFee'), event.target.value);
         renderFees();
+        renderSettingsSummary();
         return;
       }
       if (event.target === elements.stationMaxInput) {
@@ -938,6 +1032,10 @@
         localStorage.setItem(settingKey('reservedStations'), event.target.value);
         render();
       }
+    });
+
+    elements.settingsToggleButton.addEventListener('click', () => {
+      setSettingsHidden(!elements.settingsPanel.classList.contains('is-hidden'));
     });
 
     elements.resetRosterButton.addEventListener('click', () => {

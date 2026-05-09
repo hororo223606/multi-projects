@@ -34,9 +34,7 @@
     }
 
     header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position: static;
       background: rgba(246, 247, 251, 0.92);
       border-bottom: 1px solid rgba(229, 231, 235, 0.9);
       backdrop-filter: blur(14px);
@@ -55,27 +53,34 @@
       letter-spacing: -0.03em;
     }
 
-    .settings-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .settings-toggle {
-      min-width: 132px;
+    .floating-settings-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+      min-width: 0;
+      padding: 7px 10px;
       border-color: var(--accent);
+      border-radius: 999px;
       background: var(--accent);
       color: #fff;
+      font-size: 12px;
+      line-height: 1;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.24);
     }
 
-    .settings-toggle:hover {
+    .floating-settings-toggle:hover {
       background: #1d4ed8;
     }
 
+    .settings-bar {
+      display: block;
+      margin-bottom: 12px;
+      padding-right: 76px;
+    }
+
     .settings-summary {
-      flex: 1;
+      width: 100%;
       min-width: 0;
       padding: 9px 12px;
       border: 1px solid var(--line);
@@ -97,8 +102,18 @@
       display: none;
     }
 
-    body.settings-hidden .topbar {
-      padding-bottom: 10px;
+    body.settings-hidden #appHeader,
+    body.settings-hidden .status-wrap {
+      display: none !important;
+    }
+
+    body.settings-hidden main {
+      margin-top: 12px;
+      padding-top: 28px;
+    }
+
+    body.settings-hidden .table-wrap {
+      max-height: calc(100vh - 150px);
     }
 
     .controls {
@@ -386,7 +401,7 @@
     @media print {
       header { position: static; backdrop-filter: none; }
       body { background: #fff; }
-      .status-wrap, .note, .settings-bar { display: none; }
+      .status-wrap, .note, .settings-bar, .floating-settings-toggle { display: none; }
       .settings-panel.is-hidden { display: block; }
       .lists { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .table-wrap { max-height: none; overflow: visible; min-height: 0; }
@@ -396,12 +411,13 @@
   </style>
 </head>
 <body>
-  <header>
+  <button id="settingsToggleButton" class="floating-settings-toggle" type="button" aria-expanded="true" aria-controls="settingsPanel">設定隠す</button>
+
+  <header id="appHeader">
     <div class="topbar">
       <h1>参加者名簿</h1>
 
-      <div class="settings-bar" aria-label="設定パネルの表示切り替え">
-        <button id="settingsToggleButton" class="settings-toggle" type="button" aria-expanded="true" aria-controls="settingsPanel">設定を隠す</button>
+      <div class="settings-bar" aria-label="現在の設定概要">
         <div id="settingsSummary" class="settings-summary">CSV未選択 / 一般枠: 未入力 / 持参枠: 未入力 / 台番号上限: 未設定</div>
       </div>
 
@@ -534,6 +550,8 @@
     };
 
     const elements = {
+      appHeader: document.getElementById('appHeader'),
+      statusWrap: document.querySelector('.status-wrap'),
       csvInput: document.getElementById('csvInput'),
       csvStatus: document.getElementById('csvStatus'),
       settingsPanel: document.getElementById('settingsPanel'),
@@ -782,8 +800,11 @@
     function setSettingsHidden(hidden, persist = true) {
       elements.settingsPanel.classList.toggle('is-hidden', hidden);
       document.body.classList.toggle('settings-hidden', hidden);
-      elements.settingsToggleButton.textContent = hidden ? '設定を表示' : '設定を隠す';
+      elements.appHeader.hidden = hidden;
+      elements.statusWrap.hidden = hidden;
+      elements.settingsToggleButton.textContent = hidden ? '設定表示' : '設定隠す';
       elements.settingsToggleButton.setAttribute('aria-expanded', String(!hidden));
+      elements.settingsToggleButton.setAttribute('aria-label', hidden ? '設定を表示' : '設定を隠す');
       if (persist) {
         localStorage.setItem(settingKey('settingsHidden'), hidden ? '1' : '0');
       }
@@ -1035,7 +1056,7 @@
     });
 
     elements.settingsToggleButton.addEventListener('click', () => {
-      setSettingsHidden(!elements.settingsPanel.classList.contains('is-hidden'));
+      setSettingsHidden(!document.body.classList.contains('settings-hidden'));
     });
 
     elements.resetRosterButton.addEventListener('click', () => {

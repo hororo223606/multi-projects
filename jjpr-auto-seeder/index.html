@@ -25,6 +25,10 @@
       margin-bottom: 8px;
     }
 
+    h2 {
+      margin-top: 0;
+    }
+
     .card {
       background: white;
       border-radius: 16px;
@@ -61,6 +65,10 @@
       cursor: pointer;
     }
 
+    button.secondary {
+      background: #111827;
+    }
+
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -80,7 +88,7 @@
     table {
       border-collapse: collapse;
       width: 100%;
-      min-width: 900px;
+      min-width: 520px;
       font-size: 14px;
     }
 
@@ -105,6 +113,42 @@
     .warning {
       color: #b45309;
     }
+
+    .hidden {
+      display: none;
+    }
+
+    .choice-group {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+      background: #fafafa;
+    }
+
+    .choice-title {
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .choice-help {
+      color: #4b5563;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .choice-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 0;
+    }
+
+    code {
+      background: #f3f4f6;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
   </style>
 </head>
 
@@ -123,7 +167,7 @@
       <label for="jjprFile">JJPR CSV</label>
       <input id="jjprFile" type="file" accept=".csv,text/csv" />
 
-      <label for="tagColumn">検索表示用の列名</label>
+      <label for="tagColumn">表示用の列名</label>
       <input id="tagColumn" type="text" value="Short GamerTag" />
 
       <label for="exactColumn">JJPRと完全一致させる列名</label>
@@ -142,8 +186,19 @@
 
       <p class="small warning">
         注意: JJPR CSVの <code>name</code> と、参加者CSVの <code>GamerTag</code> が完全一致する人だけを採用します。
-        例: <code>ハル</code> は <code>ハル</code> のみ一致し、<code>ハルナコ</code> は除外されます。
       </p>
+    </section>
+
+    <section id="selectionSection" class="card hidden">
+      <h2>同名アカウントの選択</h2>
+      <p class="small">
+        参加者数よりJJPR上の同名アカウント数が多い名前があります。
+        その参加者数まで順位を選んでください。選択数が参加者数に満たない場合、残りは <code>not_found</code> になります。
+      </p>
+
+      <div id="selectionGroups"></div>
+
+      <button id="applySelectionButton" class="secondary">選択した順位で結果を作成</button>
     </section>
 
     <section class="card">
@@ -165,13 +220,21 @@
     const exactColumnEl = document.getElementById('exactColumn');
     const venueColumnEl = document.getElementById('venueColumn');
     const venueValuesEl = document.getElementById('venueValues');
+
     const runButton = document.getElementById('runButton');
     const downloadButton = document.getElementById('downloadButton');
+    const applySelectionButton = document.getElementById('applySelectionButton');
+
     const statusEl = document.getElementById('status');
     const summaryEl = document.getElementById('summary');
     const table = document.getElementById('resultTable');
 
+    const selectionSection = document.getElementById('selectionSection');
+    const selectionGroupsEl = document.getElementById('selectionGroups');
+
     let latestRows = [];
+    let autoRows = [];
+    let pendingGroups = [];
 
     function readFileAsText(file) {
       return new Promise((resolve, reject) => {
@@ -267,8 +330,8 @@
 
         if (!Number.isFinite(placement)) continue;
 
-        // JJPR CSVは見た目のheaderは placement,id,name,point でも、
-        // 実データは placement,id,name,prefix,shortName,point のようになっている。
+        // JJPR CSVは実データが placement,id,name,prefix,shortName,point に近い。
+        // nameやshortNameにカンマが含まれて列数が増える場合もあるので、中央をprefixとみなして復元する。
         const middle = record.slice(2, -1).map(cleanCell);
 
         let name = '';
@@ -333,9 +396,26 @@
       return map;
     }
 
-    function buildSeedRows({
+    function makeMatchedRow(candidate, displayName, originalOrder) {
+      return {
+        kind: 'matched',
+        jjprRank: candidate.rank,
+        name: candidate.name || displayName,
+        originalOrder,
+      };
+    }
+
+    function makeNotFoundRow(displayName, originalOrder) {
+      return {
+        kind: 'not_found',
+        jjprRank: '',
+        name: displayName,
+        originalOrder,
+      };
+    }
+
+    function buildParticipantGroups({
       attendees,
-      jjprRows,
       tagColumn,
       exactColumn,
       venueColumn,
@@ -343,10 +423,6 @@
     }) {
       if (attendees.length === 0) {
         throw new Error('参加者CSVに行がありません。');
-      }
-
-      if (jjprRows.length === 0) {
-        throw new Error('JJPR CSVからランキング行を読み取れませんでした。');
       }
 
       const sample = attendees[0];
@@ -366,12 +442,11 @@
           .filter(Boolean)
       );
 
-      const jjprIndex = buildJjprIndex(jjprRows);
-      const expandedRows = [];
-
+      const groups = new Map();
       let skippedByVenue = 0;
+      let competitorOrder = 0;
 
-      attendees.forEach((attendee, attendeeIndex) => {
+      attendees.forEach((attendee, index) => {
         if (venueColumnKey) {
           const venueType = normalizeVenueType(attendee[venueColumnKey]);
 
@@ -381,76 +456,207 @@
           }
         }
 
+        competitorOrder += 1;
+
         const shortTag = String(attendee[tagColumnKey] || '').trim();
         const exactName = String(attendee[exactColumnKey] || shortTag).trim();
         const key = normalizeName(exactName);
-        const candidates = jjprIndex.get(key) || [];
 
-        if (candidates.length === 0) {
-          expandedRows.push({
-            seed: '',
-            status: 'not_found',
-            candidate_index: '',
-            competitor_order: expandedRows.length + 1,
-            original_order: attendeeIndex + 1,
-            short_gamer_tag: shortTag,
-            gamer_tag: exactName,
-            jjpr_rank: '',
-            jjpr_id: '',
-            jjpr_name: '',
-            jjpr_short_name: '',
-            jjpr_point: '',
-            match_score: '',
-            jjpr_raw_row: '',
-            ...attendee,
+        if (!key) return;
+
+        if (!groups.has(key)) {
+          groups.set(key, {
+            key,
+            displayName: exactName,
+            entries: [],
           });
-
-          return;
         }
 
-        candidates.forEach((candidate, candidateIndex) => {
-          expandedRows.push({
-            seed: '',
-            status: candidates.length > 1 ? 'multiple_candidates' : 'matched',
-            candidate_index: candidateIndex + 1,
-            competitor_order: expandedRows.length + 1,
-            original_order: attendeeIndex + 1,
-            short_gamer_tag: shortTag,
-            gamer_tag: exactName,
-            jjpr_rank: candidate.rank,
-            jjpr_id: candidate.id,
-            jjpr_name: candidate.name,
-            jjpr_short_name: candidate.shortName,
-            jjpr_point: candidate.point,
-            match_score: 100,
-            jjpr_raw_row: candidate.rawText,
-            ...attendee,
-          });
+        groups.get(key).entries.push({
+          attendee,
+          shortTag,
+          exactName,
+          originalOrder: index + 1,
+          competitorOrder,
         });
       });
 
-      expandedRows.sort((a, b) => {
-        const rankA = Number.isFinite(Number(a.jjpr_rank)) && a.jjpr_rank !== ''
-          ? Number(a.jjpr_rank)
-          : Number.MAX_SAFE_INTEGER;
+      return {
+        groups: Array.from(groups.values()),
+        skippedByVenue,
+        competitorCount: competitorOrder,
+      };
+    }
 
-        const rankB = Number.isFinite(Number(b.jjpr_rank)) && b.jjpr_rank !== ''
-          ? Number(b.jjpr_rank)
-          : Number.MAX_SAFE_INTEGER;
+    function buildInitialSeeding({
+      participantGroups,
+      jjprRows,
+    }) {
+      const jjprIndex = buildJjprIndex(jjprRows);
+      const rows = [];
+      const pending = [];
 
-        if (rankA !== rankB) return rankA - rankB;
+      for (const group of participantGroups) {
+        const participantCount = group.entries.length;
+        const candidates = jjprIndex.get(group.key) || [];
 
-        return Number(a.original_order || 0) - Number(b.original_order || 0);
-      });
+        const originalOrders = group.entries.map((entry) => entry.originalOrder);
+        const firstOriginalOrder = Math.min(...originalOrders);
 
-      expandedRows.forEach((row, index) => {
-        row.seed = index + 1;
-      });
+        if (candidates.length === 0) {
+          for (let i = 0; i < participantCount; i++) {
+            rows.push(makeNotFoundRow(group.displayName, group.entries[i].originalOrder));
+          }
+
+          continue;
+        }
+
+        if (participantCount >= candidates.length) {
+          candidates.forEach((candidate, index) => {
+            const originalOrder = group.entries[index]?.originalOrder ?? firstOriginalOrder;
+            rows.push(makeMatchedRow(candidate, group.displayName, originalOrder));
+          });
+
+          const missingCount = participantCount - candidates.length;
+
+          for (let i = 0; i < missingCount; i++) {
+            const entryIndex = candidates.length + i;
+            const originalOrder = group.entries[entryIndex]?.originalOrder ?? firstOriginalOrder;
+            rows.push(makeNotFoundRow(group.displayName, originalOrder));
+          }
+
+          continue;
+        }
+
+        pending.push({
+          groupId: `group-${pending.length}`,
+          key: group.key,
+          displayName: group.displayName,
+          participantCount,
+          candidates,
+          entries: group.entries,
+          firstOriginalOrder,
+        });
+      }
 
       return {
-        rows: expandedRows,
-        skippedByVenue,
+        autoRows: rows,
+        pendingGroups: pending,
       };
+    }
+
+    function finalizeRows(internalRows) {
+      const sorted = [...internalRows].sort((a, b) => {
+        const aFound = a.kind === 'matched';
+        const bFound = b.kind === 'matched';
+
+        if (aFound !== bFound) {
+          return aFound ? -1 : 1;
+        }
+
+        if (aFound && bFound) {
+          const rankA = Number.isFinite(Number(a.jjprRank)) ? Number(a.jjprRank) : Number.MAX_SAFE_INTEGER;
+          const rankB = Number.isFinite(Number(b.jjprRank)) ? Number(b.jjprRank) : Number.MAX_SAFE_INTEGER;
+
+          if (rankA !== rankB) return rankA - rankB;
+        }
+
+        return Number(a.originalOrder || 0) - Number(b.originalOrder || 0);
+      });
+
+      return sorted.map((row, index) => ({
+        seed: index + 1,
+        jjpr_rank: row.kind === 'matched' ? row.jjprRank : 'not_found',
+        name: row.name,
+      }));
+    }
+
+    function renderSelectionGroups(groups) {
+      selectionGroupsEl.innerHTML = '';
+
+      for (const group of groups) {
+        const wrap = document.createElement('div');
+        wrap.className = 'choice-group';
+        wrap.dataset.groupId = group.groupId;
+        wrap.dataset.maxSelect = String(group.participantCount);
+
+        const title = document.createElement('div');
+        title.className = 'choice-title';
+        title.textContent = `「${group.displayName}」についてはJJPRの順位が ${group.candidates.map((c) => c.rank).join(', ')} のアカウントがありました。`;
+        wrap.appendChild(title);
+
+        const help = document.createElement('div');
+        help.className = 'choice-help';
+        help.textContent = `参加者CSV上では ${group.participantCount} 人います。最大 ${group.participantCount} 件まで選択できます。`;
+        wrap.appendChild(help);
+
+        for (const candidate of group.candidates) {
+          const label = document.createElement('label');
+          label.className = 'choice-row';
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = String(candidate.rank);
+          checkbox.dataset.groupId = group.groupId;
+          checkbox.dataset.rank = String(candidate.rank);
+
+          checkbox.addEventListener('change', () => {
+            const checked = wrap.querySelectorAll('input[type="checkbox"]:checked');
+            const maxSelect = Number(wrap.dataset.maxSelect || 0);
+
+            if (checked.length > maxSelect) {
+              checkbox.checked = false;
+              alert(`「${group.displayName}」は最大 ${maxSelect} 件まで選択できます。`);
+            }
+          });
+
+          const text = document.createElement('span');
+          text.textContent = `${candidate.rank}位 / ${candidate.name} / ${candidate.point ?? ''}pt`;
+
+          label.appendChild(checkbox);
+          label.appendChild(text);
+          wrap.appendChild(label);
+        }
+
+        selectionGroupsEl.appendChild(wrap);
+      }
+
+      selectionSection.classList.remove('hidden');
+    }
+
+    function buildRowsFromSelections() {
+      const rows = [...autoRows];
+
+      for (const group of pendingGroups) {
+        const wrap = selectionGroupsEl.querySelector(`[data-group-id="${group.groupId}"]`);
+        const selectedRanks = new Set(
+          Array.from(wrap.querySelectorAll('input[type="checkbox"]:checked'))
+            .map((input) => String(input.dataset.rank))
+        );
+
+        const selectedCandidates = group.candidates
+          .filter((candidate) => selectedRanks.has(String(candidate.rank)))
+          .sort((a, b) => {
+            const rankA = Number.isFinite(a.rank) ? a.rank : Number.MAX_SAFE_INTEGER;
+            const rankB = Number.isFinite(b.rank) ? b.rank : Number.MAX_SAFE_INTEGER;
+            return rankA - rankB;
+          });
+
+        selectedCandidates.forEach((candidate, index) => {
+          const originalOrder = group.entries[index]?.originalOrder ?? group.firstOriginalOrder;
+          rows.push(makeMatchedRow(candidate, group.displayName, originalOrder));
+        });
+
+        const notFoundCount = group.participantCount - selectedCandidates.length;
+
+        for (let i = 0; i < notFoundCount; i++) {
+          const entryIndex = selectedCandidates.length + i;
+          const originalOrder = group.entries[entryIndex]?.originalOrder ?? group.firstOriginalOrder;
+          rows.push(makeNotFoundRow(group.displayName, originalOrder));
+        }
+      }
+
+      return finalizeRows(rows);
     }
 
     function renderTable(rows) {
@@ -462,22 +668,11 @@
 
       if (!rows.length) return;
 
-      const previewColumns = [
-        'seed',
-        'status',
-        'candidate_index',
-        'short_gamer_tag',
-        'gamer_tag',
-        'jjpr_rank',
-        'jjpr_name',
-        'jjpr_short_name',
-        'jjpr_point',
-        'match_score',
-      ];
+      const columns = ['seed', 'jjpr_rank', 'name'];
 
       const tr = document.createElement('tr');
 
-      for (const col of previewColumns) {
+      for (const col of columns) {
         const th = document.createElement('th');
         th.textContent = col;
         tr.appendChild(th);
@@ -485,10 +680,10 @@
 
       thead.appendChild(tr);
 
-      for (const row of rows.slice(0, 100)) {
+      for (const row of rows.slice(0, 200)) {
         const tr = document.createElement('tr');
 
-        for (const col of previewColumns) {
+        for (const col of columns) {
           const td = document.createElement('td');
           td.textContent = row[col] ?? '';
           tr.appendChild(td);
@@ -498,8 +693,24 @@
       }
     }
 
+    function renderFinalResult(rows) {
+      latestRows = rows;
+
+      const matched = latestRows.filter((row) => row.jjpr_rank !== 'not_found').length;
+      const notFound = latestRows.filter((row) => row.jjpr_rank === 'not_found').length;
+
+      summaryEl.textContent =
+        `出力 ${latestRows.length}行 / seeded ${matched} / not_found ${notFound}`;
+
+      renderTable(latestRows);
+      downloadButton.disabled = latestRows.length === 0;
+    }
+
     function downloadCsv(rows) {
-      const csv = Papa.unparse(rows);
+      const csv = Papa.unparse(rows, {
+        columns: ['seed', 'jjpr_rank', 'name'],
+      });
+
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
       const url = URL.createObjectURL(blob);
 
@@ -518,7 +729,13 @@
       summaryEl.textContent = '';
       table.querySelector('thead').innerHTML = '';
       table.querySelector('tbody').innerHTML = '';
+      selectionGroupsEl.innerHTML = '';
+      selectionSection.classList.add('hidden');
+
       latestRows = [];
+      autoRows = [];
+      pendingGroups = [];
+
       downloadButton.disabled = true;
 
       const attendeeFile = attendeeFileEl.files[0];
@@ -549,32 +766,58 @@
 
         statusEl.textContent = `参加者 ${attendees.length}行、JJPR ${jjprRows.length}行を読み込みました。照合中...`;
 
-        const result = buildSeedRows({
+        const participantResult = buildParticipantGroups({
           attendees,
-          jjprRows,
           tagColumn: tagColumnEl.value || 'Short GamerTag',
           exactColumn: exactColumnEl.value || 'GamerTag',
           venueColumn: venueColumnEl.value || 'Venue Type',
           venueValues: venueValuesEl.value || 'competitor,competiter',
         });
 
-        latestRows = result.rows;
+        const seedResult = buildInitialSeeding({
+          participantGroups: participantResult.groups,
+          jjprRows,
+        });
 
-        const matched = latestRows.filter((row) => row.status === 'matched').length;
-        const multiple = latestRows.filter((row) => row.status === 'multiple_candidates').length;
-        const notFound = latestRows.filter((row) => row.status === 'not_found').length;
+        autoRows = seedResult.autoRows;
+        pendingGroups = seedResult.pendingGroups;
 
-        summaryEl.textContent =
-          `出力 ${latestRows.length}行 / matched ${matched} / multiple_candidates ${multiple} / not_found ${notFound} / venue対象外 ${result.skippedByVenue}`;
+        if (pendingGroups.length > 0) {
+          renderSelectionGroups(pendingGroups);
 
-        statusEl.textContent = '完了しました。';
-        renderTable(latestRows);
-        downloadButton.disabled = latestRows.length === 0;
+          statusEl.textContent =
+            `同名候補の選択が必要です。対象グループ: ${pendingGroups.length}件\n` +
+            `venue対象外: ${participantResult.skippedByVenue}人`;
+
+          summaryEl.textContent = '順位を選択してから結果を作成してください。';
+          return;
+        }
+
+        const finalRows = finalizeRows(autoRows);
+
+        statusEl.textContent =
+          `完了しました。venue対象外: ${participantResult.skippedByVenue}人`;
+
+        renderFinalResult(finalRows);
       } catch (error) {
         console.error(error);
         statusEl.textContent = `エラー: ${error.message || String(error)}`;
       } finally {
         runButton.disabled = false;
+      }
+    });
+
+    applySelectionButton.addEventListener('click', () => {
+      try {
+        const finalRows = buildRowsFromSelections();
+
+        selectionSection.classList.add('hidden');
+        statusEl.textContent = '選択を反映して結果を作成しました。';
+
+        renderFinalResult(finalRows);
+      } catch (error) {
+        console.error(error);
+        statusEl.textContent = `エラー: ${error.message || String(error)}`;
       }
     });
 

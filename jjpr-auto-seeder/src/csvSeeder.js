@@ -2,8 +2,9 @@ const { parse } = require('csv-parse/sync');
 const { stringify } = require('csv-stringify/sync');
 
 const DEFAULT_TAG_COLUMN = 'Short GamerTag';
+const DEFAULT_EXACT_MATCH_COLUMN = 'GamerTag';
 const DEFAULT_VENUE_TYPE_COLUMN = 'Venue Type';
-const DEFAULT_INCLUDED_VENUE_TYPES = ['competitor'];
+const DEFAULT_INCLUDED_VENUE_TYPES = ['competitor', 'competiter'];
 
 function parseAttendees(csvText) {
   const rows = parse(csvText, {
@@ -13,6 +14,7 @@ function parseAttendees(csvText) {
     relax_quotes: true,
     relax_column_count: true,
   });
+
   return rows;
 }
 
@@ -43,58 +45,84 @@ function findColumnKey(row, wantedColumn) {
   if (wantedColumn in row) return wantedColumn;
 
   const wanted = normalizeColumnName(wantedColumn);
+
   return Object.keys(row).find((key) => normalizeColumnName(key) === wanted) || null;
 }
 
 function buildSearchTerms(tag) {
   const raw = String(tag || '').trim();
+
   if (!raw) return [];
+
   const terms = new Set([raw]);
 
-  // Common start.gg naming patterns: "Team | Name", "Name / Japanese", "Name｜JP".
   for (const sep of ['|', '｜', '/', '／', '・']) {
     if (raw.includes(sep)) {
-      raw.split(sep).map((s) => s.trim()).filter(Boolean).forEach((s) => terms.add(s));
+      raw
+        .split(sep)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .forEach((s) => terms.add(s));
     }
   }
+
   return Array.from(terms).filter((s) => s.length > 0);
 }
 
-function scoreCandidate(tag, candidate) {
-  const tagNorm = normalizeName(tag);
-  const nameNorm = normalizeName(candidate.playerName || candidate.rawText || '');
-  if (!tagNorm || !nameNorm) return 0;
-  if (tagNorm === nameNorm) return 100;
-  if (nameNorm.includes(tagNorm)) return 80;
-  if (tagNorm.includes(nameNorm)) return 70;
-  return 30;
+function scoreCandidate(expectedName, candidate) {
+  const expectedNorm = normalizeName(expectedName);
+  const actualNorm = normalizeName(candidate.playerName || '');
+
+  if (!expectedNorm || !actualNorm) return 0;
+
+  if (expectedNorm === actualNorm) return 100;
+
+  return 0;
 }
 
 function uniqueCandidates(candidates) {
   const seen = new Set();
   const out = [];
+
   for (const c of candidates) {
-    const key = `${c.rank || ''}::${normalizeName(c.playerName || '')}::${c.rawText || ''}`;
+    const key = `${c.rank || ''}::${normalizeName(c.playerName || '')}`;
+
     if (!seen.has(key)) {
       seen.add(key);
       out.push(c);
     }
   }
+
   return out;
 }
 
-function filterAttendeesByVenueType(attendees, venueTypeColumn = DEFAULT_VENUE_TYPE_COLUMN, includedVenueTypes = DEFAULT_INCLUDED_VENUE_TYPES) {
+function filterAttendeesByVenueType(
+  attendees,
+  venueTypeColumn = DEFAULT_VENUE_TYPE_COLUMN,
+  includedVenueTypes = DEFAULT_INCLUDED_VENUE_TYPES,
+) {
   if (attendees.length === 0 || !venueTypeColumn) {
-    return { attendees, skipped: 0, venueTypeColumnKey: null };
+    return {
+      attendees,
+      skipped: 0,
+      venueTypeColumnKey: null,
+    };
   }
 
   const venueTypeColumnKey = findColumnKey(attendees[0], venueTypeColumn);
+
   if (!venueTypeColumnKey) {
-    return { attendees, skipped: 0, venueTypeColumnKey: null };
+    return {
+      attendees,
+      skipped: 0,
+      venueTypeColumnKey: null,
+    };
   }
 
   const allowed = new Set(includedVenueTypes.map(normalizeVenueType));
-  const filtered = attendees.filter((attendee) => allowed.has(normalizeVenueType(attendee[venueTypeColumnKey])));
+  const filtered = attendees.filter((attendee) => (
+    allowed.has(normalizeVenueType(attendee[venueTypeColumnKey]))
+  ));
 
   return {
     attendees: filtered,
@@ -107,23 +135,33 @@ async function buildSeedRows({
   csvText,
   scraper,
   tagColumn = DEFAULT_TAG_COLUMN,
+  exactMatchColumn = DEFAULT_EXACT_MATCH_COLUMN,
   venueTypeColumn = DEFAULT_VENUE_TYPE_COLUMN,
   includedVenueTypes = DEFAULT_INCLUDED_VENUE_TYPES,
   maxCandidates = 8,
   onProgress = () => {},
 }) {
   const allAttendees = parseAttendees(csvText);
+
   if (allAttendees.length === 0) {
     throw new Error('CSVに参加者行がありません。');
   }
 
   const tagColumnKey = findColumnKey(allAttendees[0], tagColumn);
+
   if (!tagColumnKey) {
     const columns = Object.keys(allAttendees[0]).join(', ');
     throw new Error(`CSVに "${tagColumn}" 列がありません。見つかった列: ${columns}`);
   }
 
-  const { attendees, skipped, venueTypeColumnKey } = filterAttendeesByVenueType(allAttendees, venueTypeColumn, includedVenueTypes);
+  const exactMatchColumnKey = findColumnKey(allAttendees[0], exactMatchColumn) || tagColumnKey;
+
+  const {
+    attendees,
+    skipped,
+    venueTypeColumnKey,
+  } = filterAttendeesByVenueType(allAttendees, venueTypeColumn, includedVenueTypes);
+
   if (attendees.length === 0) {
     const allowed = includedVenueTypes.join(', ');
     throw new Error(`"${venueTypeColumn}" が ${allowed} の参加者が見つかりませんでした。`);
@@ -132,35 +170,56 @@ async function buildSeedRows({
   const cache = new Map();
   const expandedRows = [];
 
-  onProgress({ index: 0, total: attendees.length, tag: '', skipped, venueTypeColumn: venueTypeColumnKey });
+  onProgress({
+    index: 0,
+    total: attendees.length,
+    tag: '',
+    skipped,
+    venueTypeColumn: venueTypeColumnKey,
+  });
 
   for (let i = 0; i < attendees.length; i++) {
     const attendee = attendees[i];
     const tag = String(attendee[tagColumnKey] || '').trim();
-    onProgress({ index: i + 1, total: attendees.length, tag, skipped, venueTypeColumn: venueTypeColumnKey });
+    const exactName = String(attendee[exactMatchColumnKey] || tag).trim();
+
+    onProgress({
+      index: i + 1,
+      total: attendees.length,
+      tag,
+      skipped,
+      venueTypeColumn: venueTypeColumnKey,
+    });
 
     const terms = buildSearchTerms(tag);
     let candidates = [];
 
     for (const term of terms) {
-      const cacheKey = normalizeName(term);
+      const cacheKey = `${normalizeName(term)}::${normalizeName(exactName)}`;
       let termMatches;
+
       if (cache.has(cacheKey)) {
         termMatches = cache.get(cacheKey);
       } else {
-        termMatches = await scraper.search(term);
+        termMatches = await scraper.search(term, exactName);
         cache.set(cacheKey, termMatches);
       }
+
       candidates.push(...termMatches);
     }
 
     candidates = uniqueCandidates(candidates)
-      .map((candidate) => ({ ...candidate, matchScore: scoreCandidate(tag, candidate) }))
+      .map((candidate) => ({
+        ...candidate,
+        matchScore: scoreCandidate(exactName, candidate),
+      }))
       .filter((candidate) => candidate.matchScore > 0)
       .sort((a, b) => {
         const rankA = Number.isFinite(a.rank) ? a.rank : Number.MAX_SAFE_INTEGER;
         const rankB = Number.isFinite(b.rank) ? b.rank : Number.MAX_SAFE_INTEGER;
+
         if (rankA !== rankB) return rankA - rankB;
+
         return (b.matchScore || 0) - (a.matchScore || 0);
       })
       .slice(0, maxCandidates);
@@ -170,6 +229,7 @@ async function buildSeedRows({
         originalOrder: i + 1,
         sourceRowNumber: allAttendees.indexOf(attendee) + 1,
         originalTag: tag,
+        exactName,
         status: 'not_found',
         candidateIndex: '',
         jjprRank: '',
@@ -178,6 +238,7 @@ async function buildSeedRows({
         jjprRawRow: '',
         attendee,
       });
+
       continue;
     }
 
@@ -186,6 +247,7 @@ async function buildSeedRows({
         originalOrder: i + 1,
         sourceRowNumber: allAttendees.indexOf(attendee) + 1,
         originalTag: tag,
+        exactName,
         status: candidates.length > 1 ? 'multiple_candidates' : 'matched',
         candidateIndex: idx + 1,
         jjprRank: candidate.rank || '',
@@ -198,9 +260,16 @@ async function buildSeedRows({
   }
 
   expandedRows.sort((a, b) => {
-    const rankA = Number.isFinite(Number(a.jjprRank)) && a.jjprRank !== '' ? Number(a.jjprRank) : Number.MAX_SAFE_INTEGER;
-    const rankB = Number.isFinite(Number(b.jjprRank)) && b.jjprRank !== '' ? Number(b.jjprRank) : Number.MAX_SAFE_INTEGER;
+    const rankA = Number.isFinite(Number(a.jjprRank)) && a.jjprRank !== ''
+      ? Number(a.jjprRank)
+      : Number.MAX_SAFE_INTEGER;
+
+    const rankB = Number.isFinite(Number(b.jjprRank)) && b.jjprRank !== ''
+      ? Number(b.jjprRank)
+      : Number.MAX_SAFE_INTEGER;
+
     if (rankA !== rankB) return rankA - rankB;
+
     return a.originalOrder - b.originalOrder;
   });
 
@@ -211,6 +280,7 @@ async function buildSeedRows({
     competitor_order: row.originalOrder,
     original_order: row.sourceRowNumber,
     short_gamer_tag: row.originalTag,
+    gamer_tag: row.exactName,
     jjpr_rank: row.jjprRank,
     jjpr_name: row.jjprName,
     match_score: row.matchScore,
@@ -220,11 +290,15 @@ async function buildSeedRows({
 }
 
 function rowsToCsv(rows) {
-  return stringify(rows, { header: true, quoted_string: true });
+  return stringify(rows, {
+    header: true,
+    quoted_string: true,
+  });
 }
 
 module.exports = {
   DEFAULT_TAG_COLUMN,
+  DEFAULT_EXACT_MATCH_COLUMN,
   DEFAULT_VENUE_TYPE_COLUMN,
   DEFAULT_INCLUDED_VENUE_TYPES,
   parseAttendees,

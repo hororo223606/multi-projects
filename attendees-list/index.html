@@ -8,13 +8,19 @@
     :root {
       --bg: #f6f7fb;
       --card: #ffffff;
-      --text: #152033;
+      --text: #172033;
       --muted: #667085;
-      --line: #e4e7ec;
+      --line: #e5e7eb;
       --accent: #2563eb;
       --accent-soft: #eff6ff;
+      --ok: #047857;
+      --ok-soft: #ecfdf5;
+      --warn: #b45309;
+      --warn-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
       --checked: #f2f4f7;
-      --shadow: 0 16px 40px rgba(21, 32, 51, 0.08);
+      --shadow: 0 16px 40px rgba(23, 32, 51, 0.08);
       --radius: 18px;
     }
 
@@ -24,20 +30,20 @@
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 280px);
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 340px);
     }
 
     header {
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(246, 247, 251, 0.88);
+      background: rgba(246, 247, 251, 0.92);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.9);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(228, 231, 236, 0.85);
     }
 
     .topbar {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
       padding: 18px 20px 16px;
     }
@@ -49,36 +55,54 @@
       letter-spacing: -0.03em;
     }
 
-    .fee-panel {
+    .controls {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1.25fr repeat(2, minmax(160px, 0.7fr));
       gap: 12px;
+      align-items: stretch;
     }
 
-    .fee-card {
+    .station-controls {
       display: grid;
-      grid-template-columns: 1fr minmax(130px, 190px);
+      grid-template-columns: minmax(160px, 0.75fr) minmax(260px, 1.2fr) auto;
       gap: 12px;
-      align-items: center;
+      margin-top: 12px;
+      align-items: stretch;
+    }
+
+    .control-card {
+      display: grid;
+      gap: 8px;
       padding: 12px;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,0.78);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.86);
     }
 
-    .fee-card strong { display: block; font-size: 15px; }
-    .fee-card span { color: var(--muted); font-size: 12px; }
+    .control-card strong {
+      display: block;
+      font-size: 15px;
+    }
 
-    .fee-input-wrap {
+    .help {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .input-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      justify-self: end;
-      width: 100%;
+      gap: 8px;
     }
 
-    input[type="number"], input[type="text"] {
-      width: 100%;
+    input[type="number"],
+    input[type="text"],
+    input[type="file"],
+    select,
+    button {
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 10px 11px;
@@ -86,20 +110,76 @@
       background: #fff;
       color: var(--text);
       outline: none;
-      transition: border-color 120ms ease, box-shadow 120ms ease;
+      transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
     }
 
-    input[type="number"]:focus, input[type="text"]:focus {
+    input[type="number"],
+    input[type="text"],
+    input[type="file"],
+    select { width: 100%; }
+
+    input[type="file"] { cursor: pointer; }
+
+    input:focus,
+    select:focus,
+    button:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
 
-    .yen { color: var(--muted); white-space: nowrap; }
+    button {
+      min-width: 110px;
+      cursor: pointer;
+      font-weight: 700;
+      background: #fff;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .yen {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .status-wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .status {
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .status.ok {
+      color: var(--ok);
+      background: var(--ok-soft);
+      border-color: #bbf7d0;
+    }
+
+    .status.warn {
+      color: var(--warn);
+      background: var(--warn-soft);
+      border-color: #fde68a;
+    }
+
+    .status.error {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-color: #fecaca;
+    }
 
     main {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 20px auto;
-      padding: 0 20px 24px;
+      padding: 0 20px 28px;
     }
 
     .lists {
@@ -127,7 +207,7 @@
       background: linear-gradient(180deg, #fff, #fbfcff);
     }
 
-    .roster-title h2 {
+    h2 {
       margin: 0;
       font-size: 22px;
       letter-spacing: -0.02em;
@@ -137,6 +217,7 @@
       margin-top: 6px;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.5;
     }
 
     .fee-badge {
@@ -146,7 +227,7 @@
       background: var(--accent-soft);
       color: #1d4ed8;
       text-align: right;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.2;
     }
 
@@ -155,11 +236,11 @@
       margin-bottom: 3px;
       color: #475569;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .table-wrap {
-      max-height: calc(100vh - 242px);
+      max-height: calc(100vh - 340px);
       min-height: 360px;
       overflow: auto;
     }
@@ -201,17 +282,28 @@
     }
 
     .name {
-      font-weight: 700;
+      font-weight: 800;
       word-break: break-word;
     }
 
-    .station-input {
-      width: 84px;
+    .station-select {
+      width: 120px;
       text-align: center;
       padding: 9px 8px;
     }
 
-    .check-cell { text-align: center; }
+    .station-select.invalid {
+      border-color: #f97316;
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .check-cell {
+      width: 92px;
+      text-align: center;
+    }
+
+    .station-cell { width: 140px; }
 
     .check-cell input {
       width: 22px;
@@ -221,32 +313,36 @@
     }
 
     .empty {
-      padding: 24px;
+      padding: 28px 18px;
       color: var(--muted);
       text-align: center;
+      line-height: 1.55;
     }
 
-    .footer-note {
+    .note {
       margin-top: 14px;
       color: var(--muted);
       font-size: 12px;
       text-align: right;
     }
 
-    @media (max-width: 820px) {
+    @media (max-width: 980px) {
       header { position: static; }
-      .fee-panel, .lists { grid-template-columns: 1fr; }
-      .fee-card { grid-template-columns: 1fr; }
-      .fee-input-wrap { justify-self: stretch; }
-      .table-wrap { max-height: 60vh; }
+      .controls,
+      .station-controls,
+      .lists { grid-template-columns: 1fr; }
+      .table-wrap { max-height: 62vh; }
+      button { width: 100%; }
     }
 
     @media print {
       header { position: static; backdrop-filter: none; }
       body { background: #fff; }
+      .status-wrap, .note { display: none; }
       .lists { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .table-wrap { max-height: none; overflow: visible; min-height: 0; }
       .roster-card { box-shadow: none; }
+      input[type="file"], .help, button { display: none; }
     }
   </style>
 </head>
@@ -254,36 +350,76 @@
   <header>
     <div class="topbar">
       <h1>参加者名簿</h1>
-      <div class="fee-panel" aria-label="参加費入力">
-        <label class="fee-card">
+
+      <div class="controls" aria-label="CSVと参加費の入力">
+        <label class="control-card">
+          <span>
+            <strong>参加者CSV</strong>
+            <span class="help">CSVを選ぶと、その場で名簿を作成します。対象は Venue Type = competitor、Venue Fee Name = 一般枠 / 持参枠 です。</span>
+          </span>
+          <input id="csvInput" type="file" accept=".csv,text/csv" />
+        </label>
+
+        <label class="control-card">
           <span>
             <strong>一般枠の料金</strong>
-            <span>名簿上部にも表示されます</span>
+            <span class="help">一般枠名簿の上部に表示します。</span>
           </span>
-          <span class="fee-input-wrap">
+          <span class="input-row">
             <input id="generalFeeInput" type="number" min="0" inputmode="numeric" placeholder="例: 1500" />
             <span class="yen">円</span>
           </span>
         </label>
-        <label class="fee-card">
+
+        <label class="control-card">
           <span>
             <strong>持参枠の料金</strong>
-            <span>名簿上部にも表示されます</span>
+            <span class="help">持参枠名簿の上部に表示します。</span>
           </span>
-          <span class="fee-input-wrap">
+          <span class="input-row">
             <input id="bringFeeInput" type="number" min="0" inputmode="numeric" placeholder="例: 1000" />
             <span class="yen">円</span>
           </span>
         </label>
       </div>
+
+      <div class="station-controls" aria-label="台番号設定">
+        <label class="control-card">
+          <span>
+            <strong>使用できる台番号の上限</strong>
+            <span class="help">例: 24 の場合、1〜24が候補になります。</span>
+          </span>
+          <input id="stationMaxInput" type="number" min="1" step="1" inputmode="numeric" placeholder="例: 24" />
+        </label>
+
+        <label class="control-card">
+          <span>
+            <strong>スタッフ使用台番号</strong>
+            <span class="help">カンマ区切りで入力。例: 2,5,9。ここに書いた番号は候補から除外します。</span>
+          </span>
+          <input id="reservedStationsInput" type="text" inputmode="numeric" placeholder="例: 2,5,9" />
+        </label>
+
+        <div class="control-card">
+          <span>
+            <strong>リセット</strong>
+            <span class="help">チェック状態と台番号だけを消します。</span>
+          </span>
+          <button id="resetRosterButton" type="button">名簿状態をリセット</button>
+        </div>
+      </div>
     </div>
   </header>
+
+  <div class="status-wrap">
+    <div id="csvStatus" class="status">ページ上部の「参加者CSV」からCSVファイルを選択してください。</div>
+  </div>
 
   <main>
     <section class="lists" aria-label="名簿">
       <article class="roster-card" aria-labelledby="generalTitle">
         <div class="roster-head">
-          <div class="roster-title">
+          <div>
             <h2 id="generalTitle">一般枠</h2>
             <div id="generalSummary" class="summary"></div>
           </div>
@@ -304,7 +440,7 @@
 
       <article class="roster-card" aria-labelledby="bringTitle">
         <div class="roster-head">
-          <div class="roster-title">
+          <div>
             <h2 id="bringTitle">持参枠</h2>
             <div id="bringSummary" class="summary"></div>
           </div>
@@ -315,7 +451,7 @@
             <thead>
               <tr>
                 <th>名前</th>
-                <th>台番号</th>
+                <th class="station-cell">台番号</th>
                 <th class="check-cell">チェック</th>
               </tr>
             </thead>
@@ -324,61 +460,70 @@
         </div>
       </article>
     </section>
-    <div class="footer-note">CSVから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠</div>
+
+    <div class="note">CSVから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠。チェック済みの参加者は各名簿の下へ移動します。</div>
   </main>
 
   <script>
-    const participants = [{"id":"21463130","name":"はっせー","feeType":"一般枠"},{"id":"21479403","name":"楽園","feeType":"持参枠"},{"id":"21479450","name":"だらー","feeType":"持参枠"},{"id":"21479486","name":"いわや","feeType":"一般枠"},{"id":"21479571","name":"なつき","feeType":"持参枠"},{"id":"21479689","name":"ゆずれもん","feeType":"一般枠"},{"id":"21480054","name":"にゃんこ好き","feeType":"持参枠"},{"id":"21480212","name":"てれさ","feeType":"一般枠"},{"id":"21487632","name":"山狗","feeType":"持参枠"},{"id":"21488392","name":"aji","feeType":"一般枠"},{"id":"21488395","name":"よんましま","feeType":"一般枠"},{"id":"21489160","name":"ポルピちゃん","feeType":"持参枠"},{"id":"21489174","name":"Iris/イリス","feeType":"持参枠"},{"id":"21495794","name":"7fit","feeType":"一般枠"},{"id":"21495798","name":"ハル","feeType":"一般枠"},{"id":"21496477","name":"0Lee","feeType":"一般枠"},{"id":"21496478","name":"BANBI","feeType":"一般枠"},{"id":"21502596","name":"Tソン","feeType":"一般枠"},{"id":"21503243","name":"dross","feeType":"一般枠"},{"id":"21503893","name":"Capritio!?/カプリチオ","feeType":"持参枠"},{"id":"21503896","name":"たいやき","feeType":"一般枠"},{"id":"21504005","name":"えも","feeType":"持参枠"},{"id":"21504229","name":"わたる","feeType":"持参枠"},{"id":"21504265","name":"ホズエル","feeType":"一般枠"},{"id":"21506097","name":"もふもふ首輪","feeType":"持参枠"},{"id":"21510207","name":"ふわ","feeType":"持参枠"},{"id":"21511496","name":"マロロン","feeType":"一般枠"},{"id":"21511515","name":"オイル","feeType":"一般枠"},{"id":"21511536","name":"ICT産業","feeType":"持参枠"},{"id":"21511539","name":"おかねない","feeType":"一般枠"},{"id":"21511574","name":"TR","feeType":"持参枠"},{"id":"21511608","name":"おおトロ","feeType":"一般枠"},{"id":"21511622","name":"Paseriman","feeType":"一般枠"},{"id":"21511693","name":"マルマイン","feeType":"一般枠"},{"id":"21511830","name":"うにずき","feeType":"一般枠"},{"id":"21512042","name":"Teezy","feeType":"一般枠"},{"id":"21512211","name":"たこせんべい","feeType":"持参枠"},{"id":"21512431","name":"どこかのひと","feeType":"一般枠"},{"id":"21512508","name":"Licht/リヒト","feeType":"持参枠"},{"id":"21512844","name":"チャック","feeType":"一般枠"},{"id":"21513268","name":"Keace","feeType":"持参枠"},{"id":"21513709","name":"ヒラタイ","feeType":"一般枠"},{"id":"21514362","name":"ユーノ","feeType":"持参枠"},{"id":"21514430","name":"ガノハラ","feeType":"一般枠"},{"id":"21514768","name":"いろはす","feeType":"一般枠"},{"id":"21515010","name":"ぽこぱんつ","feeType":"一般枠"},{"id":"21517455","name":"しんだ らいおん","feeType":"一般枠"},{"id":"21517522","name":"おはぎ","feeType":"一般枠"},{"id":"21520377","name":"8e","feeType":"持参枠"},{"id":"21520379","name":"霞/kaSuMi","feeType":"持参枠"},{"id":"21521112","name":"とと","feeType":"持参枠"},{"id":"21521263","name":"S.S.(エスツー)","feeType":"持参枠"},{"id":"21531779","name":"yellow","feeType":"一般枠"},{"id":"21531782","name":"ウミウシ","feeType":"一般枠"},{"id":"21531784","name":"ヨピ","feeType":"一般枠"},{"id":"21531791","name":"すく","feeType":"一般枠"},{"id":"21531799","name":"こう","feeType":"持参枠"},{"id":"21531833","name":"SEKIYA","feeType":"一般枠"},{"id":"21533412","name":"ヨシ","feeType":"一般枠"}];
+    const STORAGE_PREFIX = 'venue-roster-csv-v3';
+    const ASCII_COLLATOR = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+    const JA_COLLATOR = new Intl.Collator('ja-JP', { numeric: true, sensitivity: 'base' });
 
-    const STORAGE_PREFIX = 'aya7-roster-v1';
-    const collatorEn = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-    const collatorJa = new Intl.Collator('ja-JP', { numeric: true, sensitivity: 'base' });
+    let participants = [];
+    let currentFileName = '';
 
     const state = {
       checked: new Map(),
       station: new Map(),
     };
 
-    function storageKey(kind, id) {
-      return `${STORAGE_PREFIX}:${kind}:${id}`;
+    const elements = {
+      csvInput: document.getElementById('csvInput'),
+      csvStatus: document.getElementById('csvStatus'),
+      generalFeeInput: document.getElementById('generalFeeInput'),
+      bringFeeInput: document.getElementById('bringFeeInput'),
+      stationMaxInput: document.getElementById('stationMaxInput'),
+      reservedStationsInput: document.getElementById('reservedStationsInput'),
+      resetRosterButton: document.getElementById('resetRosterButton'),
+      generalSummary: document.getElementById('generalSummary'),
+      bringSummary: document.getElementById('bringSummary'),
+      generalBody: document.getElementById('generalBody'),
+      bringBody: document.getElementById('bringBody'),
+      generalFeeBadge: document.getElementById('generalFeeBadge'),
+      bringFeeBadge: document.getElementById('bringFeeBadge'),
+    };
+
+    function settingKey(kind) {
+      return `${STORAGE_PREFIX}:setting:${kind}`;
     }
 
-    function feeStorageKey(kind) {
-      return `${STORAGE_PREFIX}:fee:${kind}`;
+    function rosterKey(kind, id) {
+      return `${STORAGE_PREFIX}:roster:${kind}:${id}`;
     }
 
-    function normalizeName(name) {
-      return String(name || '').trim().normalize('NFKC');
+    function normalizeHeader(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[\s_\-]+/g, '');
     }
 
-    function sortGroup(name) {
-      const first = normalizeName(name).charAt(0);
-      if (/^[A-Za-z0-9]/.test(first)) return 0;
-      return 1;
+    function normalizeText(value) {
+      return String(value || '').trim().normalize('NFKC');
     }
 
-    function compareByRosterOrder(a, b) {
-      const an = normalizeName(a.name);
-      const bn = normalizeName(b.name);
-      const ag = sortGroup(an);
-      const bg = sortGroup(bn);
-      if (ag !== bg) return ag - bg;
-      const result = ag === 0 ? collatorEn.compare(an, bn) : collatorJa.compare(an, bn);
-      if (result !== 0) return result;
-      return String(a.id).localeCompare(String(b.id));
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
     }
 
-    function isChecked(id) {
-      return state.checked.get(String(id)) === true;
-    }
-
-    function sortParticipants(list) {
-      return [...list].sort((a, b) => {
-        const ac = isChecked(a.id) ? 1 : 0;
-        const bc = isChecked(b.id) ? 1 : 0;
-        if (ac !== bc) return ac - bc;
-        return compareByRosterOrder(a, b);
-      });
+    function setStatus(message, kind = '') {
+      elements.csvStatus.textContent = message;
+      elements.csvStatus.className = `status ${kind}`.trim();
     }
 
     function formatYen(value) {
@@ -389,103 +534,429 @@
       return `${number.toLocaleString('ja-JP')}円`;
     }
 
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+    function parsePositiveInteger(value) {
+      const raw = String(value || '').trim();
+      if (!/^\d+$/.test(raw)) return 0;
+      const number = Number(raw);
+      return Number.isSafeInteger(number) && number > 0 ? number : 0;
     }
 
-    function renderList(feeType, bodyId, summaryId) {
-      const body = document.getElementById(bodyId);
-      const summary = document.getElementById(summaryId);
-      const list = participants.filter((p) => p.feeType === feeType);
-      const sorted = sortParticipants(list);
-      const checkedCount = list.filter((p) => isChecked(p.id)).length;
+    function parseCsv(text) {
+      const source = String(text || '').replace(/^\uFEFF/, '');
+      const rows = [];
+      let row = [];
+      let field = '';
+      let inQuotes = false;
+
+      function endField() {
+        row.push(field);
+        field = '';
+      }
+
+      function endRow() {
+        endField();
+        if (row.some((cell) => String(cell).trim() !== '')) rows.push(row);
+        row = [];
+      }
+
+      for (let i = 0; i < source.length; i += 1) {
+        const char = source[i];
+
+        if (inQuotes) {
+          if (char === '"') {
+            if (source[i + 1] === '"') {
+              field += '"';
+              i += 1;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            field += char;
+          }
+          continue;
+        }
+
+        if (char === '"') {
+          inQuotes = true;
+        } else if (char === ',') {
+          endField();
+        } else if (char === '\n') {
+          endRow();
+        } else if (char === '\r') {
+          if (source[i + 1] === '\n') i += 1;
+          endRow();
+        } else {
+          field += char;
+        }
+      }
+
+      if (field !== '' || row.length > 0) endRow();
+      if (rows.length === 0) return [];
+
+      const headers = rows[0].map((header) => String(header || '').trim());
+      return rows.slice(1).map((cells) => {
+        const item = { __headers: headers };
+        headers.forEach((header, index) => {
+          item[header] = cells[index] ?? '';
+        });
+        return item;
+      });
+    }
+
+    function getField(row, candidates) {
+      const normalized = new Map();
+      for (const key of Object.keys(row)) {
+        normalized.set(normalizeHeader(key), key);
+      }
+      for (const candidate of candidates) {
+        const actualKey = normalized.get(normalizeHeader(candidate));
+        if (actualKey !== undefined) return row[actualKey];
+      }
+      return '';
+    }
+
+    function getDisplayName(row) {
+      const shortTag = getField(row, ['Short GamerTag', 'ShortGamerTag']);
+      const gamerTag = getField(row, ['GamerTag', 'Gamer Tag', 'Tag']);
+      const firstName = getField(row, ['First Name', 'FirstName']);
+      const lastName = getField(row, ['Last Name', 'LastName']);
+      const confirmation = getField(row, ['Confirmation Number', 'ConfirmationNumber']);
+      const id = getField(row, ['Id', 'ID']);
+
+      return normalizeText(
+        shortTag ||
+        gamerTag ||
+        [lastName, firstName].filter(Boolean).join(' ') ||
+        confirmation ||
+        id ||
+        '名前未設定'
+      );
+    }
+
+    function feeTypeFromName(feeName) {
+      const value = normalizeText(feeName);
+      if (value.includes('持参枠')) return '持参枠';
+      if (value.includes('一般枠')) return '一般枠';
+      return '';
+    }
+
+    function rowToParticipant(row, index) {
+      const name = getDisplayName(row);
+      const rawId = normalizeText(
+        getField(row, ['Id', 'ID']) ||
+        getField(row, ['Confirmation Number', 'ConfirmationNumber']) ||
+        `${name}-${index}`
+      );
+      const id = rawId || `${name}-${index}`;
+
+      return {
+        id,
+        name,
+        feeType: feeTypeFromName(getField(row, ['Venue Fee Name', 'VenueFeeName'])),
+      };
+    }
+
+    function buildParticipants(rows) {
+      return rows
+        .filter((row) => normalizeText(getField(row, ['Venue Type', 'VenueType'])).toLowerCase() === 'competitor')
+        .filter((row) => feeTypeFromName(getField(row, ['Venue Fee Name', 'VenueFeeName'])) !== '')
+        .map(rowToParticipant);
+    }
+
+    function asciiGroup(name) {
+      const first = normalizeText(name).charAt(0);
+      return /^[A-Za-z0-9]/.test(first) ? 0 : 1;
+    }
+
+    function isChecked(id) {
+      return state.checked.get(String(id)) === true;
+    }
+
+    function compareRosterOrder(a, b) {
+      const an = normalizeText(a.name);
+      const bn = normalizeText(b.name);
+      const ag = asciiGroup(an);
+      const bg = asciiGroup(bn);
+      if (ag !== bg) return ag - bg;
+      const result = ag === 0 ? ASCII_COLLATOR.compare(an, bn) : JA_COLLATOR.compare(an, bn);
+      if (result !== 0) return result;
+      return String(a.id).localeCompare(String(b.id));
+    }
+
+    function sortRoster(list) {
+      return [...list].sort((a, b) => {
+        const ac = isChecked(a.id) ? 1 : 0;
+        const bc = isChecked(b.id) ? 1 : 0;
+        if (ac !== bc) return ac - bc;
+        return compareRosterOrder(a, b);
+      });
+    }
+
+    function loadSettings() {
+      elements.generalFeeInput.value = localStorage.getItem(settingKey('generalFee')) || '';
+      elements.bringFeeInput.value = localStorage.getItem(settingKey('bringFee')) || '';
+      elements.stationMaxInput.value = localStorage.getItem(settingKey('stationMax')) || '';
+      elements.reservedStationsInput.value = localStorage.getItem(settingKey('reservedStations')) || '';
+    }
+
+    function loadRosterStateForParticipants() {
+      for (const participant of participants) {
+        const id = String(participant.id);
+        if (!state.checked.has(id)) {
+          state.checked.set(id, localStorage.getItem(rosterKey('checked', id)) === '1');
+        }
+        if (!state.station.has(id)) {
+          state.station.set(id, localStorage.getItem(rosterKey('station', id)) || '');
+        }
+      }
+    }
+
+    function getStationMax() {
+      return parsePositiveInteger(elements.stationMaxInput.value);
+    }
+
+    function getReservedStations() {
+      const max = getStationMax();
+      const values = String(elements.reservedStationsInput.value || '')
+        .split(/[\s,、，]+/)
+        .map(parsePositiveInteger)
+        .filter((number) => number > 0)
+        .filter((number) => max === 0 || number <= max);
+      return new Set(values);
+    }
+
+    function getAssignedStations(exceptId = '') {
+      const assigned = new Set();
+      for (const participant of participants) {
+        if (participant.feeType !== '持参枠') continue;
+        const id = String(participant.id);
+        if (id === String(exceptId)) continue;
+        const station = parsePositiveInteger(state.station.get(id));
+        if (station > 0) assigned.add(station);
+      }
+      return assigned;
+    }
+
+    function getAvailableStationsFor(id) {
+      const max = getStationMax();
+      if (max <= 0) return [];
+
+      const reserved = getReservedStations();
+      const assignedByOthers = getAssignedStations(id);
+      const stations = [];
+      for (let number = 1; number <= max; number += 1) {
+        if (reserved.has(number)) continue;
+        if (assignedByOthers.has(number)) continue;
+        stations.push(number);
+      }
+      return stations;
+    }
+
+    function isValidStationFor(id, station) {
+      if (!station) return true;
+      const max = getStationMax();
+      if (max <= 0 || station < 1 || station > max) return false;
+      if (getReservedStations().has(station)) return false;
+      if (getAssignedStations(id).has(station)) return false;
+      return true;
+    }
+
+    function buildStationSelect(participant) {
+      const id = String(participant.id);
+      const current = parsePositiveInteger(state.station.get(id));
+      const max = getStationMax();
+      const available = getAvailableStationsFor(id);
+      const validCurrent = isValidStationFor(id, current);
+      const options = [];
+      const disabled = max <= 0 ? 'disabled' : '';
+      const invalidClass = current && !validCurrent ? ' invalid' : '';
+
+      options.push(`<option value="">${max <= 0 ? '上限未設定' : '未選択'}</option>`);
+
+      if (current > 0 && !available.includes(current)) {
+        const label = validCurrent ? String(current) : `${current}（使用不可）`;
+        options.push(`<option value="${current}" selected>${escapeHtml(label)}</option>`);
+      }
+
+      for (const station of available) {
+        const selected = station === current ? 'selected' : '';
+        options.push(`<option value="${station}" ${selected}>${station}</option>`);
+      }
+
+      return `<select class="station-select${invalidClass}" data-station-id="${escapeHtml(id)}" aria-label="${escapeHtml(participant.name)}の台番号" ${disabled}>${options.join('')}</select>`;
+    }
+
+    function stationSummary() {
+      const max = getStationMax();
+      if (max <= 0) return '台番号上限: 未設定';
+
+      const reserved = getReservedStations();
+      const assigned = getAssignedStations();
+      const assignedCount = [...assigned].filter((number) => number >= 1 && number <= max).length;
+      let availableCount = 0;
+      for (let number = 1; number <= max; number += 1) {
+        if (!reserved.has(number) && !assigned.has(number)) availableCount += 1;
+      }
+      return `台番号: 1〜${max} / スタッフ使用 ${reserved.size}台 / 割当済み ${assignedCount}台 / 未使用候補 ${availableCount}台`;
+    }
+
+    function renderFees() {
+      elements.generalFeeBadge.innerHTML = `<small>参加費</small>${formatYen(elements.generalFeeInput.value)}`;
+      elements.bringFeeBadge.innerHTML = `<small>参加費</small>${formatYen(elements.bringFeeInput.value)}`;
+    }
+
+    function renderRoster(feeType, body, summary) {
+      const list = participants.filter((participant) => participant.feeType === feeType);
+      const sorted = sortRoster(list);
+      const checkedCount = list.filter((participant) => isChecked(participant.id)).length;
       const uncheckedCount = list.length - checkedCount;
+      const extraSummary = feeType === '持参枠' ? `<br>${stationSummary()}` : '';
 
-      summary.textContent = `合計 ${list.length}名 / 未チェック ${uncheckedCount}名 / チェック済み ${checkedCount}名`;
+      summary.innerHTML = `合計 ${list.length}名 / 未チェック ${uncheckedCount}名 / チェック済み ${checkedCount}名${extraSummary}`;
 
-      if (sorted.length === 0) {
-        body.innerHTML = `<tr><td class="empty" colspan="${feeType === '持参枠' ? 3 : 2}">該当者はいません</td></tr>`;
+      if (participants.length === 0) {
+        const colspan = feeType === '持参枠' ? 3 : 2;
+        body.innerHTML = `<tr><td class="empty" colspan="${colspan}">上部から参加者CSVを選択してください。</td></tr>`;
         return;
       }
 
-      body.innerHTML = sorted.map((p) => {
-        const id = String(p.id);
+      if (sorted.length === 0) {
+        const colspan = feeType === '持参枠' ? 3 : 2;
+        body.innerHTML = `<tr><td class="empty" colspan="${colspan}">該当者はいません。</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = sorted.map((participant) => {
+        const id = String(participant.id);
         const checked = isChecked(id);
-        const name = escapeHtml(p.name);
-        const station = escapeHtml(state.station.get(id) || '');
+        const name = escapeHtml(participant.name);
         if (feeType === '持参枠') {
           return `
             <tr class="${checked ? 'checked' : ''}">
               <td class="name">${name}</td>
-              <td><input class="station-input" type="text" inputmode="numeric" pattern="[0-9]*" data-station-id="${id}" value="${station}" placeholder="台" aria-label="${name}の台番号"></td>
-              <td class="check-cell"><input type="checkbox" data-check-id="${id}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
+              <td class="station-cell">${buildStationSelect(participant)}</td>
+              <td class="check-cell"><input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
             </tr>`;
         }
         return `
           <tr class="${checked ? 'checked' : ''}">
             <td class="name">${name}</td>
-            <td class="check-cell"><input type="checkbox" data-check-id="${id}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
+            <td class="check-cell"><input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
           </tr>`;
       }).join('');
     }
 
-    function renderFees() {
-      const generalFee = document.getElementById('generalFeeInput').value;
-      const bringFee = document.getElementById('bringFeeInput').value;
-      document.getElementById('generalFeeBadge').innerHTML = `<small>参加費</small>${formatYen(generalFee)}`;
-      document.getElementById('bringFeeBadge').innerHTML = `<small>参加費</small>${formatYen(bringFee)}`;
-    }
-
     function render() {
       renderFees();
-      renderList('一般枠', 'generalBody', 'generalSummary');
-      renderList('持参枠', 'bringBody', 'bringSummary');
+      renderRoster('一般枠', elements.generalBody, elements.generalSummary);
+      renderRoster('持参枠', elements.bringBody, elements.bringSummary);
     }
 
-    function loadState() {
-      for (const p of participants) {
-        const id = String(p.id);
-        state.checked.set(id, localStorage.getItem(storageKey('checked', id)) === '1');
-        state.station.set(id, localStorage.getItem(storageKey('station', id)) || '');
+    async function readCsvFile(file) {
+      const buffer = await file.arrayBuffer();
+      const encodings = ['utf-8', 'shift_jis'];
+      for (const encoding of encodings) {
+        try {
+          return new TextDecoder(encoding, { fatal: true }).decode(buffer);
+        } catch (_) {
+          // Try the next encoding.
+        }
       }
-      document.getElementById('generalFeeInput').value = localStorage.getItem(feeStorageKey('general')) || '';
-      document.getElementById('bringFeeInput').value = localStorage.getItem(feeStorageKey('bring')) || '';
+      return new TextDecoder('utf-8').decode(buffer);
     }
 
-    document.addEventListener('change', (event) => {
-      const checkbox = event.target.closest('[data-check-id]');
-      if (!checkbox) return;
-      const id = String(checkbox.dataset.checkId);
-      state.checked.set(id, checkbox.checked);
-      localStorage.setItem(storageKey('checked', id), checkbox.checked ? '1' : '0');
-      render();
+    async function handleCsvFile(file) {
+      try {
+        const text = await readCsvFile(file);
+        const rows = parseCsv(text);
+        participants = buildParticipants(rows);
+        currentFileName = file.name || '';
+        loadRosterStateForParticipants();
+
+        const competitorRows = rows.filter((row) => normalizeText(getField(row, ['Venue Type', 'VenueType'])).toLowerCase() === 'competitor');
+        const generalCount = participants.filter((participant) => participant.feeType === '一般枠').length;
+        const bringCount = participants.filter((participant) => participant.feeType === '持参枠').length;
+
+        if (rows.length === 0) {
+          setStatus('CSVに行が見つかりませんでした。ファイル内容を確認してください。', 'error');
+        } else if (participants.length === 0) {
+          setStatus(`CSVは読み込みましたが、対象者が見つかりませんでした。読み込み行数: ${rows.length}行 / competitor: ${competitorRows.length}行。Venue Fee Name が 一般枠 または 持参枠 になっているか確認してください。`, 'warn');
+        } else {
+          setStatus(`${currentFileName} を読み込みました。名簿対象 ${participants.length}名（一般枠 ${generalCount}名 / 持参枠 ${bringCount}名）。competitor全体は ${competitorRows.length}名です。`, 'ok');
+        }
+        render();
+      } catch (error) {
+        console.error(error);
+        participants = [];
+        setStatus('CSVの読み込みに失敗しました。CSV形式、文字コード、ヘッダー名を確認してください。', 'error');
+        render();
+      }
+    }
+
+    elements.csvInput.addEventListener('change', (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      handleCsvFile(file);
     });
 
-    document.addEventListener('input', (event) => {
-      const stationInput = event.target.closest('[data-station-id]');
-      if (stationInput) {
-        const id = String(stationInput.dataset.stationId);
-        state.station.set(id, stationInput.value);
-        localStorage.setItem(storageKey('station', id), stationInput.value);
+    document.addEventListener('change', (event) => {
+      const checkInput = event.target.closest('[data-check-id]');
+      if (checkInput) {
+        const id = String(checkInput.dataset.checkId);
+        state.checked.set(id, checkInput.checked);
+        localStorage.setItem(rosterKey('checked', id), checkInput.checked ? '1' : '0');
+        render();
         return;
       }
 
-      if (event.target.id === 'generalFeeInput') {
-        localStorage.setItem(feeStorageKey('general'), event.target.value);
-        renderFees();
-      }
-      if (event.target.id === 'bringFeeInput') {
-        localStorage.setItem(feeStorageKey('bring'), event.target.value);
-        renderFees();
+      const stationSelect = event.target.closest('[data-station-id]');
+      if (stationSelect) {
+        const id = String(stationSelect.dataset.stationId);
+        state.station.set(id, stationSelect.value);
+        localStorage.setItem(rosterKey('station', id), stationSelect.value);
+        render();
       }
     });
 
-    loadState();
+    document.addEventListener('input', (event) => {
+      if (event.target === elements.generalFeeInput) {
+        localStorage.setItem(settingKey('generalFee'), event.target.value);
+        renderFees();
+        return;
+      }
+      if (event.target === elements.bringFeeInput) {
+        localStorage.setItem(settingKey('bringFee'), event.target.value);
+        renderFees();
+        return;
+      }
+      if (event.target === elements.stationMaxInput) {
+        localStorage.setItem(settingKey('stationMax'), event.target.value);
+        render();
+        return;
+      }
+      if (event.target === elements.reservedStationsInput) {
+        localStorage.setItem(settingKey('reservedStations'), event.target.value);
+        render();
+      }
+    });
+
+    elements.resetRosterButton.addEventListener('click', () => {
+      for (const participant of participants) {
+        const id = String(participant.id);
+        state.checked.set(id, false);
+        state.station.set(id, '');
+        localStorage.removeItem(rosterKey('checked', id));
+        localStorage.removeItem(rosterKey('station', id));
+      }
+      render();
+      if (participants.length > 0) {
+        setStatus(`${currentFileName || 'CSV'} のチェック状態と台番号をリセットしました。`, 'ok');
+      } else {
+        setStatus('リセットしました。CSVを読み込むと名簿が表示されます。', 'ok');
+      }
+    });
+
+    loadSettings();
     render();
   </script>
 </body>

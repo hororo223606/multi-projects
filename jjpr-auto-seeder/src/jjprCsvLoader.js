@@ -18,6 +18,39 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
+async function findCsvExportControl(page) {
+  const candidates = [
+    page.getByRole('button', { name: /CSV出力|CSV/i }).first(),
+    page.getByRole('link', { name: /CSV出力|CSV/i }).first(),
+    page.locator('button').filter({ hasText: /CSV出力|CSV/i }).first(),
+    page.locator('a').filter({ hasText: /CSV出力|CSV/i }).first(),
+    page.locator('[role="button"]').filter({ hasText: /CSV出力|CSV/i }).first(),
+    page.getByText(/CSV出力/i).first(),
+    page.getByText(/CSV/i).first(),
+  ];
+
+  for (const locator of candidates) {
+    const count = await locator.count().catch(() => 0);
+
+    if (count === 0) continue;
+
+    const visible = await locator.isVisible().catch(() => false);
+
+    if (visible) {
+      return locator;
+    }
+  }
+
+  const bodyText = await page.locator('body').innerText({ timeout: 5000 }).catch(() => '');
+
+  throw new Error(
+    `JJPRページ上でCSV出力ボタンが見つかりませんでした。ページ本文の先頭: ${String(bodyText)
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 1000)}`,
+  );
+}
+
 async function downloadJjprCsv({
   url = DEFAULT_JJPR_URL,
   headless = true,
@@ -51,11 +84,9 @@ async function downloadJjprCsv({
       timeout: timeoutMs,
     }).catch(() => {});
 
-    const csvButton = page.getByRole('button', { name: /CSV出力|CSV/i }).first();
+    const csvButton = await findCsvExportControl(page);
 
-    if (!(await csvButton.isVisible().catch(() => false))) {
-      throw new Error('JJPRページ上でCSV出力ボタンが見つかりませんでした。');
-    }
+    await csvButton.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
 
     const [download] = await Promise.all([
       page.waitForEvent('download', { timeout: timeoutMs }),
@@ -195,4 +226,5 @@ module.exports = {
   downloadJjprCsv,
   parseJjprCsv,
   getJjprRankingRows,
+  findCsvExportControl,
 };

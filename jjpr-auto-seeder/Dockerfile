@@ -7,7 +7,9 @@ ENV PORT=3000
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 COPY package*.json ./
-RUN npm install --omit=dev
+
+RUN npm cache clean --force \
+  && npm install --omit=dev --ignore-scripts --no-audit --no-fund
 
 COPY . .
 

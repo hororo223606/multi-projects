@@ -18,7 +18,15 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
-async function findCsvExportControl(page) {
+async function findCsvExportControl(page, timeoutMs = 60000) {
+  // JJPRの集計完了後に「CSV出力」が表示されるまで待つ
+  await page.waitForFunction(() => {
+    const text = document.body?.innerText || '';
+    return /CSV出力|CSV/i.test(text);
+  }, null, {
+    timeout: timeoutMs,
+  }).catch(() => {});
+
   const candidates = [
     page.getByRole('button', { name: /CSV出力|CSV/i }).first(),
     page.getByRole('link', { name: /CSV出力|CSV/i }).first(),
@@ -31,11 +39,9 @@ async function findCsvExportControl(page) {
 
   for (const locator of candidates) {
     const count = await locator.count().catch(() => 0);
-
     if (count === 0) continue;
 
     const visible = await locator.isVisible().catch(() => false);
-
     if (visible) {
       return locator;
     }
@@ -84,7 +90,7 @@ async function downloadJjprCsv({
       timeout: timeoutMs,
     }).catch(() => {});
 
-    const csvButton = await findCsvExportControl(page);
+    const csvButton = await findCsvExportControl(page, timeoutMs);
 
     await csvButton.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
 

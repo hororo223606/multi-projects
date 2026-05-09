@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>参加者名簿</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #152033;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --checked: #f2f4f7;
+      --shadow: 0 16px 40px rgba(21, 32, 51, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 280px);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(246, 247, 251, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(228, 231, 236, 0.85);
+    }
+
+    .topbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 20px 16px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .fee-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .fee-card {
+      display: grid;
+      grid-template-columns: 1fr minmax(130px, 190px);
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.78);
+    }
+
+    .fee-card strong { display: block; font-size: 15px; }
+    .fee-card span { color: var(--muted); font-size: 12px; }
+
+    .fee-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-self: end;
+      width: 100%;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 11px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    input[type="number"]:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .yen { color: var(--muted); white-space: nowrap; }
+
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px 24px;
+    }
+
+    .lists {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .roster-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .roster-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+
+    .roster-title h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .summary {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .fee-badge {
+      min-width: 132px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--accent-soft);
+      color: #1d4ed8;
+      text-align: right;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .fee-badge small {
+      display: block;
+      margin-bottom: 3px;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .table-wrap {
+      max-height: calc(100vh - 242px);
+      min-height: 360px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 10px 12px;
+      color: var(--muted);
+      background: #f9fafb;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+      background: #fff;
+    }
+
+    tbody tr.checked td {
+      background: var(--checked);
+      color: #667085;
+    }
+
+    tbody tr.checked .name {
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+    }
+
+    .name {
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .station-input {
+      width: 84px;
+      text-align: center;
+      padding: 9px 8px;
+    }
+
+    .check-cell { text-align: center; }
+
+    .check-cell input {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .empty {
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    @media (max-width: 820px) {
+      header { position: static; }
+      .fee-panel, .lists { grid-template-columns: 1fr; }
+      .fee-card { grid-template-columns: 1fr; }
+      .fee-input-wrap { justify-self: stretch; }
+      .table-wrap { max-height: 60vh; }
+    }
+
+    @media print {
+      header { position: static; backdrop-filter: none; }
+      body { background: #fff; }
+      .lists { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .table-wrap { max-height: none; overflow: visible; min-height: 0; }
+      .roster-card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <h1>参加者名簿</h1>
+      <div class="fee-panel" aria-label="参加費入力">
+        <label class="fee-card">
+          <span>
+            <strong>一般枠の料金</strong>
+            <span>名簿上部にも表示されます</span>
+          </span>
+          <span class="fee-input-wrap">
+            <input id="generalFeeInput" type="number" min="0" inputmode="numeric" placeholder="例: 1500" />
+            <span class="yen">円</span>
+          </span>
+        </label>
+        <label class="fee-card">
+          <span>
+            <strong>持参枠の料金</strong>
+            <span>名簿上部にも表示されます</span>
+          </span>
+          <span class="fee-input-wrap">
+            <input id="bringFeeInput" type="number" min="0" inputmode="numeric" placeholder="例: 1000" />
+            <span class="yen">円</span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="lists" aria-label="名簿">
+      <article class="roster-card" aria-labelledby="generalTitle">
+        <div class="roster-head">
+          <div class="roster-title">
+            <h2 id="generalTitle">一般枠</h2>
+            <div id="generalSummary" class="summary"></div>
+          </div>
+          <div id="generalFeeBadge" class="fee-badge"><small>参加費</small>未入力</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>名前</th>
+                <th class="check-cell">チェック</th>
+              </tr>
+            </thead>
+            <tbody id="generalBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="roster-card" aria-labelledby="bringTitle">
+        <div class="roster-head">
+          <div class="roster-title">
+            <h2 id="bringTitle">持参枠</h2>
+            <div id="bringSummary" class="summary"></div>
+          </div>
+          <div id="bringFeeBadge" class="fee-badge"><small>参加費</small>未入力</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>名前</th>
+                <th>台番号</th>
+                <th class="check-cell">チェック</th>
+              </tr>
+            </thead>
+            <tbody id="bringBody"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+    <div class="footer-note">CSVから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠</div>
+  </main>
+
+  <script>
+    const participants = [{"id":"21463130","name":"はっせー","feeType":"一般枠"},{"id":"21479403","name":"楽園","feeType":"持参枠"},{"id":"21479450","name":"だらー","feeType":"持参枠"},{"id":"21479486","name":"いわや","feeType":"一般枠"},{"id":"21479571","name":"なつき","feeType":"持参枠"},{"id":"21479689","name":"ゆずれもん","feeType":"一般枠"},{"id":"21480054","name":"にゃんこ好き","feeType":"持参枠"},{"id":"21480212","name":"てれさ","feeType":"一般枠"},{"id":"21487632","name":"山狗","feeType":"持参枠"},{"id":"21488392","name":"aji","feeType":"一般枠"},{"id":"21488395","name":"よんましま","feeType":"一般枠"},{"id":"21489160","name":"ポルピちゃん","feeType":"持参枠"},{"id":"21489174","name":"Iris/イリス","feeType":"持参枠"},{"id":"21495794","name":"7fit","feeType":"一般枠"},{"id":"21495798","name":"ハル","feeType":"一般枠"},{"id":"21496477","name":"0Lee","feeType":"一般枠"},{"id":"21496478","name":"BANBI","feeType":"一般枠"},{"id":"21502596","name":"Tソン","feeType":"一般枠"},{"id":"21503243","name":"dross","feeType":"一般枠"},{"id":"21503893","name":"Capritio!?/カプリチオ","feeType":"持参枠"},{"id":"21503896","name":"たいやき","feeType":"一般枠"},{"id":"21504005","name":"えも","feeType":"持参枠"},{"id":"21504229","name":"わたる","feeType":"持参枠"},{"id":"21504265","name":"ホズエル","feeType":"一般枠"},{"id":"21506097","name":"もふもふ首輪","feeType":"持参枠"},{"id":"21510207","name":"ふわ","feeType":"持参枠"},{"id":"21511496","name":"マロロン","feeType":"一般枠"},{"id":"21511515","name":"オイル","feeType":"一般枠"},{"id":"21511536","name":"ICT産業","feeType":"持参枠"},{"id":"21511539","name":"おかねない","feeType":"一般枠"},{"id":"21511574","name":"TR","feeType":"持参枠"},{"id":"21511608","name":"おおトロ","feeType":"一般枠"},{"id":"21511622","name":"Paseriman","feeType":"一般枠"},{"id":"21511693","name":"マルマイン","feeType":"一般枠"},{"id":"21511830","name":"うにずき","feeType":"一般枠"},{"id":"21512042","name":"Teezy","feeType":"一般枠"},{"id":"21512211","name":"たこせんべい","feeType":"持参枠"},{"id":"21512431","name":"どこかのひと","feeType":"一般枠"},{"id":"21512508","name":"Licht/リヒト","feeType":"持参枠"},{"id":"21512844","name":"チャック","feeType":"一般枠"},{"id":"21513268","name":"Keace","feeType":"持参枠"},{"id":"21513709","name":"ヒラタイ","feeType":"一般枠"},{"id":"21514362","name":"ユーノ","feeType":"持参枠"},{"id":"21514430","name":"ガノハラ","feeType":"一般枠"},{"id":"21514768","name":"いろはす","feeType":"一般枠"},{"id":"21515010","name":"ぽこぱんつ","feeType":"一般枠"},{"id":"21517455","name":"しんだ らいおん","feeType":"一般枠"},{"id":"21517522","name":"おはぎ","feeType":"一般枠"},{"id":"21520377","name":"8e","feeType":"持参枠"},{"id":"21520379","name":"霞/kaSuMi","feeType":"持参枠"},{"id":"21521112","name":"とと","feeType":"持参枠"},{"id":"21521263","name":"S.S.(エスツー)","feeType":"持参枠"},{"id":"21531779","name":"yellow","feeType":"一般枠"},{"id":"21531782","name":"ウミウシ","feeType":"一般枠"},{"id":"21531784","name":"ヨピ","feeType":"一般枠"},{"id":"21531791","name":"すく","feeType":"一般枠"},{"id":"21531799","name":"こう","feeType":"持参枠"},{"id":"21531833","name":"SEKIYA","feeType":"一般枠"},{"id":"21533412","name":"ヨシ","feeType":"一般枠"}];
+
+    const STORAGE_PREFIX = 'aya7-roster-v1';
+    const collatorEn = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+    const collatorJa = new Intl.Collator('ja-JP', { numeric: true, sensitivity: 'base' });
+
+    const state = {
+      checked: new Map(),
+      station: new Map(),
+    };
+
+    function storageKey(kind, id) {
+      return `${STORAGE_PREFIX}:${kind}:${id}`;
+    }
+
+    function feeStorageKey(kind) {
+      return `${STORAGE_PREFIX}:fee:${kind}`;
+    }
+
+    function normalizeName(name) {
+      return String(name || '').trim().normalize('NFKC');
+    }
+
+    function sortGroup(name) {
+      const first = normalizeName(name).charAt(0);
+      if (/^[A-Za-z0-9]/.test(first)) return 0;
+      return 1;
+    }
+
+    function compareByRosterOrder(a, b) {
+      const an = normalizeName(a.name);
+      const bn = normalizeName(b.name);
+      const ag = sortGroup(an);
+      const bg = sortGroup(bn);
+      if (ag !== bg) return ag - bg;
+      const result = ag === 0 ? collatorEn.compare(an, bn) : collatorJa.compare(an, bn);
+      if (result !== 0) return result;
+      return String(a.id).localeCompare(String(b.id));
+    }
+
+    function isChecked(id) {
+      return state.checked.get(String(id)) === true;
+    }
+
+    function sortParticipants(list) {
+      return [...list].sort((a, b) => {
+        const ac = isChecked(a.id) ? 1 : 0;
+        const bc = isChecked(b.id) ? 1 : 0;
+        if (ac !== bc) return ac - bc;
+        return compareByRosterOrder(a, b);
+      });
+    }
+
+    function formatYen(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '未入力';
+      const number = Number(raw);
+      if (!Number.isFinite(number)) return `${raw}円`;
+      return `${number.toLocaleString('ja-JP')}円`;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function renderList(feeType, bodyId, summaryId) {
+      const body = document.getElementById(bodyId);
+      const summary = document.getElementById(summaryId);
+      const list = participants.filter((p) => p.feeType === feeType);
+      const sorted = sortParticipants(list);
+      const checkedCount = list.filter((p) => isChecked(p.id)).length;
+      const uncheckedCount = list.length - checkedCount;
+
+      summary.textContent = `合計 ${list.length}名 / 未チェック ${uncheckedCount}名 / チェック済み ${checkedCount}名`;
+
+      if (sorted.length === 0) {
+        body.innerHTML = `<tr><td class="empty" colspan="${feeType === '持参枠' ? 3 : 2}">該当者はいません</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = sorted.map((p) => {
+        const id = String(p.id);
+        const checked = isChecked(id);
+        const name = escapeHtml(p.name);
+        const station = escapeHtml(state.station.get(id) || '');
+        if (feeType === '持参枠') {
+          return `
+            <tr class="${checked ? 'checked' : ''}">
+              <td class="name">${name}</td>
+              <td><input class="station-input" type="text" inputmode="numeric" pattern="[0-9]*" data-station-id="${id}" value="${station}" placeholder="台" aria-label="${name}の台番号"></td>
+              <td class="check-cell"><input type="checkbox" data-check-id="${id}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
+            </tr>`;
+        }
+        return `
+          <tr class="${checked ? 'checked' : ''}">
+            <td class="name">${name}</td>
+            <td class="check-cell"><input type="checkbox" data-check-id="${id}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
+          </tr>`;
+      }).join('');
+    }
+
+    function renderFees() {
+      const generalFee = document.getElementById('generalFeeInput').value;
+      const bringFee = document.getElementById('bringFeeInput').value;
+      document.getElementById('generalFeeBadge').innerHTML = `<small>参加費</small>${formatYen(generalFee)}`;
+      document.getElementById('bringFeeBadge').innerHTML = `<small>参加費</small>${formatYen(bringFee)}`;
+    }
+
+    function render() {
+      renderFees();
+      renderList('一般枠', 'generalBody', 'generalSummary');
+      renderList('持参枠', 'bringBody', 'bringSummary');
+    }
+
+    function loadState() {
+      for (const p of participants) {
+        const id = String(p.id);
+        state.checked.set(id, localStorage.getItem(storageKey('checked', id)) === '1');
+        state.station.set(id, localStorage.getItem(storageKey('station', id)) || '');
+      }
+      document.getElementById('generalFeeInput').value = localStorage.getItem(feeStorageKey('general')) || '';
+      document.getElementById('bringFeeInput').value = localStorage.getItem(feeStorageKey('bring')) || '';
+    }
+
+    document.addEventListener('change', (event) => {
+      const checkbox = event.target.closest('[data-check-id]');
+      if (!checkbox) return;
+      const id = String(checkbox.dataset.checkId);
+      state.checked.set(id, checkbox.checked);
+      localStorage.setItem(storageKey('checked', id), checkbox.checked ? '1' : '0');
+      render();
+    });
+
+    document.addEventListener('input', (event) => {
+      const stationInput = event.target.closest('[data-station-id]');
+      if (stationInput) {
+        const id = String(stationInput.dataset.stationId);
+        state.station.set(id, stationInput.value);
+        localStorage.setItem(storageKey('station', id), stationInput.value);
+        return;
+      }
+
+      if (event.target.id === 'generalFeeInput') {
+        localStorage.setItem(feeStorageKey('general'), event.target.value);
+        renderFees();
+      }
+      if (event.target.id === 'bringFeeInput') {
+        localStorage.setItem(feeStorageKey('bring'), event.target.value);
+        renderFees();
+      }
+    });
+
+    loadState();
+    render();
+  </script>
+</body>
+</html>

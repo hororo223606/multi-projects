@@ -18,14 +18,44 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
-async function findCsvExportControl(page, timeoutMs = 60000) {
-  // JJPRの集計完了後に「CSV出力」が表示されるまで待つ
-  await page.waitForFunction(() => {
-    const text = document.body?.innerText || '';
-    return /CSV出力|CSV/i.test(text);
-  }, null, {
-    timeout: timeoutMs,
-  }).catch(() => {});
+async function waitForJjprReady(page, timeoutMs = 180000) {
+  const startedAt = Date.now();
+
+  try {
+    await page.waitForFunction(() => {
+      const text = document.body?.innerText || '';
+
+      const isAggregating =
+        /集計中です|長い場合は数十分|しばらく経っても集計が終わらない/i.test(text);
+
+      const hasCsvExport = /CSV出力|CSV/i.test(text);
+
+      const hasRankingText =
+        /\b\d{1,6}(?:st|nd|rd|th)\b/i.test(text) ||
+        /\b\d{1,6}位\b/.test(text) ||
+        /placement\s*,\s*id\s*,\s*name/i.test(text);
+
+      return !isAggregating && (hasCsvExport || hasRankingText);
+    }, null, {
+      timeout: timeoutMs,
+      polling: 1000,
+    });
+  } catch (error) {
+    const bodyText = await page.locator('body').innerText({ timeout: 5000 }).catch(() => '');
+    const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
+
+    throw new Error(
+      `JJPRの集計完了を${elapsedSec}秒待ちましたが完了しませんでした。` +
+      `ページ本文の先頭: ${String(bodyText)
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 1000)}`
+    );
+  }
+}
+
+async function findCsvExportControl(page, timeoutMs = 180000) {
+  await waitForJjprReady(page, timeoutMs);
 
   const candidates = [
     page.getByRole('button', { name: /CSV出力|CSV/i }).first(),
@@ -50,10 +80,11 @@ async function findCsvExportControl(page, timeoutMs = 60000) {
   const bodyText = await page.locator('body').innerText({ timeout: 5000 }).catch(() => '');
 
   throw new Error(
-    `JJPRページ上でCSV出力ボタンが見つかりませんでした。ページ本文の先頭: ${String(bodyText)
+    `JJPRの集計は完了したようですが、CSV出力ボタンが見つかりませんでした。` +
+    `ページ本文の先頭: ${String(bodyText)
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 1000)}`,
+      .slice(0, 1000)}`
   );
 }
 
@@ -205,7 +236,10 @@ async function getJjprRankingRows({
     };
   }
 
-  const csvText = await downloadJjprCsv({ url });
+  const csvText = await downloadJjprCsv({
+    url,
+    timeoutMs: 180000,
+  });
   const rows = parseJjprCsv(csvText);
 
   if (rows.length === 0) {

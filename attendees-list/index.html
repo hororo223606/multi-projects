@@ -22,6 +22,7 @@
       --checked: #f2f4f7;
       --shadow: 0 16px 40px rgba(23, 32, 51, 0.08);
       --radius: 18px;
+      --delete-width: 88px;
     }
 
     * { box-sizing: border-box; }
@@ -33,99 +34,97 @@
       background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 340px);
     }
 
-    header {
-      position: static;
-      background: rgba(246, 247, 251, 0.92);
-      border-bottom: 1px solid rgba(229, 231, 235, 0.9);
-      backdrop-filter: blur(14px);
+    button,
+    input,
+    select {
+      font: inherit;
     }
 
-    .topbar {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 18px 20px 16px;
+    button {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 800;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
     }
 
-    h1 {
-      margin: 0 0 14px;
-      font-size: clamp(22px, 3vw, 32px);
-      line-height: 1.15;
-      letter-spacing: -0.03em;
+    button:hover { transform: translateY(-1px); }
+
+    button:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+      outline: none;
     }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="file"],
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 11px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    input[type="file"] { cursor: pointer; }
 
     .floating-settings-toggle {
       position: fixed;
       top: 10px;
       right: 10px;
-      z-index: 100;
+      z-index: 1000;
       min-width: 0;
-      padding: 7px 10px;
+      padding: 8px 10px;
       border-color: var(--accent);
-      border-radius: 999px;
       background: var(--accent);
       color: #fff;
       font-size: 12px;
       line-height: 1;
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.24);
+      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.22);
     }
 
-    .floating-settings-toggle:hover {
-      background: #1d4ed8;
+    .floating-settings-toggle:hover { background: #1d4ed8; }
+
+    .app-header {
+      border-bottom: 1px solid rgba(229, 231, 235, 0.9);
+      background: rgba(246, 247, 251, 0.78);
+      backdrop-filter: blur(14px);
     }
 
-    .settings-bar {
-      display: block;
-      margin-bottom: 12px;
-      padding-right: 76px;
+    .topbar,
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 20px;
     }
 
-    .settings-summary {
-      width: 100%;
-      min-width: 0;
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: rgba(255, 255, 255, 0.76);
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    main { padding-top: 18px; }
 
-    .settings-panel {
-      display: block;
-    }
-
-    .settings-panel.is-hidden {
-      display: none;
-    }
-
-    body.settings-hidden #appHeader,
-    body.settings-hidden .status-wrap {
-      display: none !important;
-    }
-
-    body.settings-hidden main {
-      margin-top: 12px;
-      padding-top: 28px;
-    }
-
-    body.settings-hidden .table-wrap {
-      max-height: calc(100vh - 150px);
+    h1 {
+      margin: 0 0 14px;
+      padding-right: 104px;
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
     }
 
     .controls {
       display: grid;
-      grid-template-columns: 1.25fr repeat(2, minmax(160px, 0.7fr));
+      grid-template-columns: minmax(260px, 1.35fr) repeat(2, minmax(150px, 0.7fr));
       gap: 12px;
       align-items: stretch;
     }
 
     .station-controls {
       display: grid;
-      grid-template-columns: minmax(160px, 0.75fr) minmax(260px, 1.2fr) auto;
+      grid-template-columns: minmax(170px, 0.75fr) minmax(240px, 1.1fr) minmax(250px, 1fr) minmax(160px, 0.7fr);
       gap: 12px;
       margin-top: 12px;
       align-items: stretch;
@@ -159,53 +158,105 @@
       gap: 8px;
     }
 
-    input[type="number"],
-    input[type="text"],
-    input[type="file"],
-    select,
-    button {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 11px;
-      font: inherit;
-      background: #fff;
-      color: var(--text);
-      outline: none;
-      transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
-    }
-
-    input[type="number"],
-    input[type="text"],
-    input[type="file"],
-    select { width: 100%; }
-
-    input[type="file"] { cursor: pointer; }
-
-    input:focus,
-    select:focus,
-    button:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-    }
-
-    button {
-      min-width: 110px;
-      cursor: pointer;
-      font-weight: 700;
-      background: #fff;
-    }
-
-    button:hover { transform: translateY(-1px); }
-
     .yen {
       color: var(--muted);
       white-space: nowrap;
     }
 
-    .status-wrap {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .total-card {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+
+    .total-amount {
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: #1d4ed8;
+    }
+
+    .total-breakdown {
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .danger-button {
+      border-color: #fecaca;
+      background: #fff;
+      color: var(--danger);
+    }
+
+    .dq-panel {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .dq-panel-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .dq-panel h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .dq-count {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .dq-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 8px;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .dq-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 8px 8px 10px;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      background: var(--danger-soft);
+    }
+
+    .dq-name {
+      min-width: 0;
+      font-weight: 850;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dq-meta {
+      display: block;
+      margin-top: 2px;
+      color: #991b1b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .restore-button {
+      min-width: 0;
+      padding: 7px 9px;
+      border-color: #bbf7d0;
+      color: var(--ok);
+      background: #fff;
+      font-size: 12px;
     }
 
     .status {
@@ -237,12 +288,6 @@
       border-color: #fecaca;
     }
 
-    main {
-      max-width: 1240px;
-      margin: 20px auto;
-      padding: 0 20px 28px;
-    }
-
     .lists {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -260,25 +305,24 @@
 
     .roster-head {
       display: flex;
-      justify-content: space-between;
-      gap: 16px;
       align-items: flex-start;
-      padding: 16px 16px 14px;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 16px 12px;
       border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, #fff, #fbfcff);
     }
 
-    h2 {
+    .roster-head h2 {
       margin: 0;
-      font-size: 22px;
-      letter-spacing: -0.02em;
+      font-size: 20px;
+      line-height: 1.2;
     }
 
     .summary {
-      margin-top: 6px;
+      margin-top: 5px;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.35;
     }
 
     .fee-badge {
@@ -288,7 +332,7 @@
       background: var(--accent-soft);
       color: #1d4ed8;
       text-align: right;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.2;
     }
 
@@ -297,60 +341,122 @@
       margin-bottom: 3px;
       color: #475569;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .table-wrap {
-      max-height: calc(100vh - 340px);
+    .roster-table {
+      max-height: calc(100vh - 230px);
       min-height: 360px;
       overflow: auto;
     }
 
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+    body.settings-visible .roster-table { max-height: calc(100vh - 420px); }
+
+    .list-head,
+    .participant-row {
+      display: grid;
+      align-items: center;
     }
 
-    thead th {
+    .general-grid { grid-template-columns: minmax(0, 1fr) 92px; }
+    .bring-grid { grid-template-columns: minmax(0, 1fr) 140px 92px; }
+
+    .list-head {
       position: sticky;
       top: 0;
-      z-index: 1;
-      padding: 10px 12px;
-      color: var(--muted);
-      background: #f9fafb;
+      z-index: 2;
       border-bottom: 1px solid var(--line);
+      background: #f9fafb;
+      color: var(--muted);
       font-size: 12px;
-      text-align: left;
+      font-weight: 850;
       white-space: nowrap;
     }
 
-    tbody td {
+    .list-head > div,
+    .participant-row > div {
       padding: 10px 12px;
-      border-bottom: 1px solid var(--line);
-      vertical-align: middle;
-      background: #fff;
     }
 
-    tbody tr.checked td {
+    .row-shell {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background: var(--danger);
+      touch-action: pan-y;
+    }
+
+    .row-shell:last-child { border-bottom: 0; }
+
+    .participant-row {
+      position: relative;
+      z-index: 1;
+      min-height: 54px;
+      background: #fff;
+      transition: transform 160ms ease, background-color 160ms ease;
+      will-change: transform;
+    }
+
+    .row-shell.revealed .participant-row { transform: translateX(calc(-1 * var(--delete-width))); }
+
+    .dq-delete {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      width: var(--delete-width);
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: var(--danger);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .dq-delete:hover { transform: none; background: #b91c1c; }
+
+    .participant-row.checked {
       background: var(--checked);
       color: #667085;
     }
 
-    tbody tr.checked .name {
+    .participant-row.checked .name-text {
       text-decoration: line-through;
       text-decoration-thickness: 1px;
     }
 
-    .name {
-      font-weight: 800;
+    .name-cell {
+      min-width: 0;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .name-cell:active { cursor: grabbing; }
+
+    .name-text {
+      display: block;
+      font-weight: 900;
       word-break: break-word;
     }
 
+    .name-hint {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .station-cell,
+    .check-cell { text-align: center; }
+
     .station-select {
-      width: 120px;
+      width: 112px;
+      padding: 8px;
       text-align: center;
-      padding: 9px 8px;
     }
 
     .station-select.invalid {
@@ -358,13 +464,6 @@
       background: #fff7ed;
       color: #9a3412;
     }
-
-    .check-cell {
-      width: 92px;
-      text-align: center;
-    }
-
-    .station-cell { width: 140px; }
 
     .check-cell input {
       width: 22px;
@@ -378,6 +477,7 @@
       color: var(--muted);
       text-align: center;
       line-height: 1.55;
+      background: #fff;
     }
 
     .note {
@@ -388,41 +488,52 @@
     }
 
     @media (max-width: 980px) {
-      header { position: static; }
-      .settings-bar { align-items: stretch; flex-direction: column; }
-      .settings-summary { white-space: normal; }
       .controls,
       .station-controls,
       .lists { grid-template-columns: 1fr; }
-      .table-wrap { max-height: 62vh; }
+      .roster-table,
+      body.settings-visible .roster-table { max-height: 62vh; }
+      .dq-list { grid-template-columns: 1fr; }
       button { width: 100%; }
+      .floating-settings-toggle { width: auto; }
+    }
+
+    @media (max-width: 560px) {
+      .topbar,
+      main { padding: 14px; }
+      h1 { padding-right: 96px; }
+      .roster-head { flex-direction: column; }
+      .fee-badge { width: 100%; text-align: left; }
+      .general-grid { grid-template-columns: minmax(0, 1fr) 72px; }
+      .bring-grid { grid-template-columns: minmax(0, 1fr) 112px 72px; }
+      .list-head > div,
+      .participant-row > div { padding: 9px 8px; }
+      .station-select { width: 96px; }
     }
 
     @media print {
-      header { position: static; backdrop-filter: none; }
+      .floating-settings-toggle,
+      .app-header,
+      .note,
+      .dq-delete,
+      .name-hint { display: none !important; }
       body { background: #fff; }
-      .status-wrap, .note, .settings-bar, .floating-settings-toggle { display: none; }
-      .settings-panel.is-hidden { display: block; }
+      main { max-width: none; padding: 0; }
       .lists { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .table-wrap { max-height: none; overflow: visible; min-height: 0; }
+      .roster-table { max-height: none; overflow: visible; min-height: 0; }
       .roster-card { box-shadow: none; }
-      input[type="file"], .help, button { display: none; }
+      .row-shell { background: #fff; }
     }
   </style>
 </head>
-<body>
-  <button id="settingsToggleButton" class="floating-settings-toggle" type="button" aria-expanded="true" aria-controls="settingsPanel">設定隠す</button>
+<body class="settings-visible">
+  <button id="settingsToggle" class="floating-settings-toggle" type="button">設定隠す</button>
 
-  <header id="appHeader">
+  <header id="appHeader" class="app-header">
     <div class="topbar">
       <h1>参加者名簿</h1>
 
-      <div class="settings-bar" aria-label="現在の設定概要">
-        <div id="settingsSummary" class="settings-summary">CSV未選択 / 一般枠: 未入力 / 持参枠: 未入力 / 台番号上限: 未設定</div>
-      </div>
-
-      <div id="settingsPanel" class="settings-panel">
-        <div class="controls" aria-label="CSVと参加費の入力">
+      <div class="controls" aria-label="CSVと参加費の入力">
         <label class="control-card">
           <span>
             <strong>参加者CSV</strong>
@@ -434,7 +545,7 @@
         <label class="control-card">
           <span>
             <strong>一般枠の料金</strong>
-            <span class="help">一般枠名簿の上部に表示します。</span>
+            <span class="help">一般枠名簿の上部に表示し、受付済み合計金額にも使います。</span>
           </span>
           <span class="input-row">
             <input id="generalFeeInput" type="number" min="0" inputmode="numeric" placeholder="例: 1500" />
@@ -445,7 +556,7 @@
         <label class="control-card">
           <span>
             <strong>持参枠の料金</strong>
-            <span class="help">持参枠名簿の上部に表示します。</span>
+            <span class="help">持参枠名簿の上部に表示し、受付済み合計金額にも使います。</span>
           </span>
           <span class="input-row">
             <input id="bringFeeInput" type="number" min="0" inputmode="numeric" placeholder="例: 1000" />
@@ -454,7 +565,7 @@
         </label>
       </div>
 
-      <div class="station-controls" aria-label="台番号設定">
+      <div class="station-controls" aria-label="台番号設定と受付集計">
         <label class="control-card">
           <span>
             <strong>使用できる台番号の上限</strong>
@@ -471,21 +582,38 @@
           <input id="reservedStationsInput" type="text" inputmode="numeric" placeholder="例: 2,5,9" />
         </label>
 
+        <div class="control-card total-card" aria-live="polite">
+          <span>
+            <strong>受付済み合計金額</strong>
+            <span class="help">チェック済み、かつDQされていない参加者だけを集計します。</span>
+          </span>
+          <div id="totalRevenue" class="total-amount">0円</div>
+          <div id="totalBreakdown" class="total-breakdown">一般枠 0名 / 持参枠 0名</div>
+        </div>
+
         <div class="control-card">
           <span>
             <strong>リセット</strong>
-            <span class="help">チェック状態と台番号だけを消します。</span>
+            <span class="help">チェック状態・台番号・DQ状態を消します。CSVや料金は残します。</span>
           </span>
-          <button id="resetRosterButton" type="button">名簿状態をリセット</button>
+          <button id="resetRosterButton" class="danger-button" type="button">名簿状態をリセット</button>
         </div>
       </div>
-      </div>
+
+      <section class="dq-panel" aria-labelledby="dqTitle">
+        <div class="dq-panel-head">
+          <div>
+            <h2 id="dqTitle">DQ用名簿</h2>
+            <span class="help">名簿で名前を左にスライドして「削除」を押すと、ここに移動します。「戻す」で受付名簿へ復帰できます。</span>
+          </div>
+          <div id="dqCount" class="dq-count">0名</div>
+        </div>
+        <div id="dqList" class="dq-list"></div>
+      </section>
+
+      <div id="csvStatus" class="status">ページ上部の「参加者CSV」からCSVファイルを選択してください。</div>
     </div>
   </header>
-
-  <div class="status-wrap">
-    <div id="csvStatus" class="status">ページ上部の「参加者CSV」からCSVファイルを選択してください。</div>
-  </div>
 
   <main>
     <section class="lists" aria-label="名簿">
@@ -497,16 +625,12 @@
           </div>
           <div id="generalFeeBadge" class="fee-badge"><small>参加費</small>未入力</div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>名前</th>
-                <th class="check-cell">チェック</th>
-              </tr>
-            </thead>
-            <tbody id="generalBody"></tbody>
-          </table>
+        <div class="roster-table">
+          <div class="list-head general-grid">
+            <div>名前</div>
+            <div class="check-cell">チェック</div>
+          </div>
+          <div id="generalBody"></div>
         </div>
       </article>
 
@@ -518,26 +642,22 @@
           </div>
           <div id="bringFeeBadge" class="fee-badge"><small>参加費</small>未入力</div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>名前</th>
-                <th class="station-cell">台番号</th>
-                <th class="check-cell">チェック</th>
-              </tr>
-            </thead>
-            <tbody id="bringBody"></tbody>
-          </table>
+        <div class="roster-table">
+          <div class="list-head bring-grid">
+            <div>名前</div>
+            <div class="station-cell">台番号</div>
+            <div class="check-cell">チェック</div>
+          </div>
+          <div id="bringBody"></div>
         </div>
       </article>
     </section>
 
-    <div class="note">CSVから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠。チェック済みの参加者は各名簿の下へ移動します。</div>
+    <div class="note">CSVから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠。チェック済みの参加者は各名簿の下へ移動します。名前を左にスライドするとDQ削除できます。</div>
   </main>
 
   <script>
-    const STORAGE_PREFIX = 'venue-roster-csv-v3';
+    const STORAGE_PREFIX = 'venue-roster-csv-v8';
     const ASCII_COLLATOR = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
     const JA_COLLATOR = new Intl.Collator('ja-JP', { numeric: true, sensitivity: 'base' });
 
@@ -547,21 +667,23 @@
     const state = {
       checked: new Map(),
       station: new Map(),
+      dq: new Map(),
     };
 
     const elements = {
+      settingsToggle: document.getElementById('settingsToggle'),
       appHeader: document.getElementById('appHeader'),
-      statusWrap: document.querySelector('.status-wrap'),
       csvInput: document.getElementById('csvInput'),
       csvStatus: document.getElementById('csvStatus'),
-      settingsPanel: document.getElementById('settingsPanel'),
-      settingsToggleButton: document.getElementById('settingsToggleButton'),
-      settingsSummary: document.getElementById('settingsSummary'),
       generalFeeInput: document.getElementById('generalFeeInput'),
       bringFeeInput: document.getElementById('bringFeeInput'),
       stationMaxInput: document.getElementById('stationMaxInput'),
       reservedStationsInput: document.getElementById('reservedStationsInput'),
       resetRosterButton: document.getElementById('resetRosterButton'),
+      totalRevenue: document.getElementById('totalRevenue'),
+      totalBreakdown: document.getElementById('totalBreakdown'),
+      dqCount: document.getElementById('dqCount'),
+      dqList: document.getElementById('dqList'),
       generalSummary: document.getElementById('generalSummary'),
       bringSummary: document.getElementById('bringSummary'),
       generalBody: document.getElementById('generalBody'),
@@ -598,175 +720,160 @@
         .replaceAll("'", '&#039;');
     }
 
-    function setStatus(message, kind = '') {
-      elements.csvStatus.textContent = message;
-      elements.csvStatus.className = `status ${kind}`.trim();
-    }
-
     function formatYen(value) {
-      const raw = String(value || '').trim();
-      if (!raw) return '未入力';
-      const number = Number(raw);
-      if (!Number.isFinite(number)) return `${raw}円`;
-      return `${number.toLocaleString('ja-JP')}円`;
+      const numeric = Number(String(value || '').replace(/,/g, ''));
+      if (!Number.isFinite(numeric) || numeric <= 0) return '未入力';
+      return `${numeric.toLocaleString('ja-JP')}円`;
     }
 
-    function parsePositiveInteger(value) {
-      const raw = String(value || '').trim();
-      if (!/^\d+$/.test(raw)) return 0;
-      const number = Number(raw);
-      return Number.isSafeInteger(number) && number > 0 ? number : 0;
+    function getFeeValue(kind) {
+      const input = kind === '一般枠' ? elements.generalFeeInput : elements.bringFeeInput;
+      const value = Number(String(input.value || '').replace(/,/g, ''));
+      return Number.isFinite(value) && value > 0 ? value : 0;
     }
 
-    function parseCsv(text) {
-      const source = String(text || '').replace(/^\uFEFF/, '');
+    function getDisplayName(row) {
+      return normalizeText(row['Short GamerTag'])
+        || normalizeText(row['GamerTag'])
+        || normalizeText([row['Last Name'], row['First Name']].filter(Boolean).join(' '))
+        || normalizeText(row['Confirmation Number'])
+        || '名前未設定';
+    }
+
+    function classifyName(name) {
+      const first = normalizeText(name).charAt(0);
+      if (/^[A-Za-z0-9]/.test(first)) return 0;
+      if (/^[\u3040-\u30ff\u3400-\u9fff]/.test(first)) return 1;
+      return 2;
+    }
+
+    function compareParticipants(a, b) {
+      const classDiff = classifyName(a.name) - classifyName(b.name);
+      if (classDiff !== 0) return classDiff;
+      const collator = classifyName(a.name) === 0 ? ASCII_COLLATOR : JA_COLLATOR;
+      return collator.compare(a.name, b.name) || String(a.id).localeCompare(String(b.id));
+    }
+
+    function splitCsvLineAware(text) {
       const rows = [];
       let row = [];
-      let field = '';
+      let cell = '';
       let inQuotes = false;
 
-      function endField() {
-        row.push(field);
-        field = '';
-      }
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
 
-      function endRow() {
-        endField();
-        if (row.some((cell) => String(cell).trim() !== '')) rows.push(row);
-        row = [];
-      }
-
-      for (let i = 0; i < source.length; i += 1) {
-        const char = source[i];
-
-        if (inQuotes) {
-          if (char === '"') {
-            if (source[i + 1] === '"') {
-              field += '"';
-              i += 1;
-            } else {
-              inQuotes = false;
-            }
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i += 1;
           } else {
-            field += char;
+            inQuotes = !inQuotes;
           }
           continue;
         }
 
-        if (char === '"') {
-          inQuotes = true;
-        } else if (char === ',') {
-          endField();
-        } else if (char === '\n') {
-          endRow();
-        } else if (char === '\r') {
-          if (source[i + 1] === '\n') i += 1;
-          endRow();
-        } else {
-          field += char;
+        if (char === ',' && !inQuotes) {
+          row.push(cell);
+          cell = '';
+          continue;
         }
+
+        if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i += 1;
+          row.push(cell);
+          if (row.some((value) => value !== '')) rows.push(row);
+          row = [];
+          cell = '';
+          continue;
+        }
+
+        cell += char;
       }
 
-      if (field !== '' || row.length > 0) endRow();
-      if (rows.length === 0) return [];
+      row.push(cell);
+      if (row.some((value) => value !== '')) rows.push(row);
+      return rows;
+    }
 
-      const headers = rows[0].map((header) => String(header || '').trim());
-      return rows.slice(1).map((cells) => {
-        const item = { __headers: headers };
+    function rowsToObjects(rows) {
+      if (!rows.length) return [];
+      const headers = rows[0].map((h) => String(h || '').trim());
+      return rows.slice(1).map((row) => {
+        const obj = {};
         headers.forEach((header, index) => {
-          item[header] = cells[index] ?? '';
+          obj[header] = row[index] ?? '';
         });
-        return item;
+        return obj;
       });
     }
 
-    function getField(row, candidates) {
-      const normalized = new Map();
-      for (const key of Object.keys(row)) {
-        normalized.set(normalizeHeader(key), key);
-      }
+    function findHeader(row, candidates) {
+      const keys = Object.keys(row || {});
+      const normalized = new Map(keys.map((key) => [normalizeHeader(key), key]));
       for (const candidate of candidates) {
-        const actualKey = normalized.get(normalizeHeader(candidate));
-        if (actualKey !== undefined) return row[actualKey];
+        const key = normalized.get(normalizeHeader(candidate));
+        if (key) return key;
       }
       return '';
     }
 
-    function getDisplayName(row) {
-      const shortTag = getField(row, ['Short GamerTag', 'ShortGamerTag']);
-      const gamerTag = getField(row, ['GamerTag', 'Gamer Tag', 'Tag']);
-      const firstName = getField(row, ['First Name', 'FirstName']);
-      const lastName = getField(row, ['Last Name', 'LastName']);
-      const confirmation = getField(row, ['Confirmation Number', 'ConfirmationNumber']);
-      const id = getField(row, ['Id', 'ID']);
+    function parseParticipants(csvText) {
+      const objects = rowsToObjects(splitCsvLineAware(csvText));
+      if (!objects.length) return [];
 
-      return normalizeText(
-        shortTag ||
-        gamerTag ||
-        [lastName, firstName].filter(Boolean).join(' ') ||
-        confirmation ||
-        id ||
-        '名前未設定'
-      );
+      const sample = objects[0];
+      const idKey = findHeader(sample, ['Id', 'ID', 'id']);
+      const venueTypeKey = findHeader(sample, ['Venue Type', 'VenueType']);
+      const feeNameKey = findHeader(sample, ['Venue Fee Name', 'VenueFeeName']);
+      const confirmationKey = findHeader(sample, ['Confirmation Number', 'ConfirmationNumber']);
+
+      if (!venueTypeKey || !feeNameKey) {
+        throw new Error('CSVに Venue Type または Venue Fee Name の列が見つかりません。');
+      }
+
+      return objects.map((row, index) => {
+        const fallbackId = `${normalizeText(row[confirmationKey]) || 'row'}-${index + 1}`;
+        const id = normalizeText(row[idKey]) || fallbackId;
+        const venueType = normalizeText(row[venueTypeKey]).toLowerCase();
+        const feeName = normalizeText(row[feeNameKey]);
+        return {
+          id,
+          name: getDisplayName(row),
+          venueType,
+          feeName,
+          confirmation: normalizeText(row[confirmationKey]),
+        };
+      }).filter((participant) => (
+        participant.venueType === 'competitor'
+        && (participant.feeName === '一般枠' || participant.feeName === '持参枠')
+      ));
     }
 
-    function feeTypeFromName(feeName) {
-      const value = normalizeText(feeName);
-      if (value.includes('持参枠')) return '持参枠';
-      if (value.includes('一般枠')) return '一般枠';
-      return '';
+    async function readFileText(file) {
+      const buffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      try {
+        return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      } catch (_) {
+        return new TextDecoder('shift_jis').decode(bytes);
+      }
     }
 
-    function rowToParticipant(row, index) {
-      const name = getDisplayName(row);
-      const rawId = normalizeText(
-        getField(row, ['Id', 'ID']) ||
-        getField(row, ['Confirmation Number', 'ConfirmationNumber']) ||
-        `${name}-${index}`
-      );
-      const id = rawId || `${name}-${index}`;
-
-      return {
-        id,
-        name,
-        feeType: feeTypeFromName(getField(row, ['Venue Fee Name', 'VenueFeeName'])),
-      };
+    function saveParticipants() {
+      localStorage.setItem(settingKey('participants'), JSON.stringify(participants));
+      localStorage.setItem(settingKey('fileName'), currentFileName);
     }
 
-    function buildParticipants(rows) {
-      return rows
-        .filter((row) => normalizeText(getField(row, ['Venue Type', 'VenueType'])).toLowerCase() === 'competitor')
-        .filter((row) => feeTypeFromName(getField(row, ['Venue Fee Name', 'VenueFeeName'])) !== '')
-        .map(rowToParticipant);
-    }
-
-    function asciiGroup(name) {
-      const first = normalizeText(name).charAt(0);
-      return /^[A-Za-z0-9]/.test(first) ? 0 : 1;
-    }
-
-    function isChecked(id) {
-      return state.checked.get(String(id)) === true;
-    }
-
-    function compareRosterOrder(a, b) {
-      const an = normalizeText(a.name);
-      const bn = normalizeText(b.name);
-      const ag = asciiGroup(an);
-      const bg = asciiGroup(bn);
-      if (ag !== bg) return ag - bg;
-      const result = ag === 0 ? ASCII_COLLATOR.compare(an, bn) : JA_COLLATOR.compare(an, bn);
-      if (result !== 0) return result;
-      return String(a.id).localeCompare(String(b.id));
-    }
-
-    function sortRoster(list) {
-      return [...list].sort((a, b) => {
-        const ac = isChecked(a.id) ? 1 : 0;
-        const bc = isChecked(b.id) ? 1 : 0;
-        if (ac !== bc) return ac - bc;
-        return compareRosterOrder(a, b);
-      });
+    function loadParticipants() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(settingKey('participants')) || '[]');
+        if (Array.isArray(saved)) participants = saved;
+      } catch (_) {
+        participants = [];
+      }
+      currentFileName = localStorage.getItem(settingKey('fileName')) || '';
     }
 
     function loadSettings() {
@@ -774,142 +881,68 @@
       elements.bringFeeInput.value = localStorage.getItem(settingKey('bringFee')) || '';
       elements.stationMaxInput.value = localStorage.getItem(settingKey('stationMax')) || '';
       elements.reservedStationsInput.value = localStorage.getItem(settingKey('reservedStations')) || '';
-      setSettingsHidden(localStorage.getItem(settingKey('settingsHidden')) === '1', false);
+
+      const visible = localStorage.getItem(settingKey('settingsVisible')) !== '0';
+      setSettingsVisible(visible, false);
     }
 
-    function getCurrentFileLabel() {
-      return currentFileName || 'CSV未選択';
-    }
-
-    function renderSettingsSummary() {
-      const max = getStationMax();
-      const reserved = getReservedStations();
-      const generalCount = participants.filter((participant) => participant.feeType === '一般枠').length;
-      const bringCount = participants.filter((participant) => participant.feeType === '持参枠').length;
-      const participantSummary = participants.length > 0 ? ` / 名簿: 一般枠 ${generalCount}名・持参枠 ${bringCount}名` : '';
-      const reservedSummary = reserved.size > 0 ? ` / スタッフ使用: ${[...reserved].sort((a, b) => a - b).join(',')}` : '';
-
-      elements.settingsSummary.textContent = [
-        getCurrentFileLabel(),
-        `一般枠: ${formatYen(elements.generalFeeInput.value)}`,
-        `持参枠: ${formatYen(elements.bringFeeInput.value)}`,
-        `台番号上限: ${max > 0 ? max : '未設定'}`,
-      ].join(' / ') + reservedSummary + participantSummary;
-    }
-
-    function setSettingsHidden(hidden, persist = true) {
-      elements.settingsPanel.classList.toggle('is-hidden', hidden);
-      document.body.classList.toggle('settings-hidden', hidden);
-      elements.appHeader.hidden = hidden;
-      elements.statusWrap.hidden = hidden;
-      elements.settingsToggleButton.textContent = hidden ? '設定表示' : '設定隠す';
-      elements.settingsToggleButton.setAttribute('aria-expanded', String(!hidden));
-      elements.settingsToggleButton.setAttribute('aria-label', hidden ? '設定を表示' : '設定を隠す');
-      if (persist) {
-        localStorage.setItem(settingKey('settingsHidden'), hidden ? '1' : '0');
-      }
-      renderSettingsSummary();
-    }
-
-    function loadRosterStateForParticipants() {
+    function loadRosterState() {
+      state.checked.clear();
+      state.station.clear();
+      state.dq.clear();
       for (const participant of participants) {
         const id = String(participant.id);
-        if (!state.checked.has(id)) {
-          state.checked.set(id, localStorage.getItem(rosterKey('checked', id)) === '1');
-        }
-        if (!state.station.has(id)) {
-          state.station.set(id, localStorage.getItem(rosterKey('station', id)) || '');
-        }
+        state.checked.set(id, localStorage.getItem(rosterKey('checked', id)) === '1');
+        state.station.set(id, localStorage.getItem(rosterKey('station', id)) || '');
+        state.dq.set(id, localStorage.getItem(rosterKey('dq', id)) === '1');
       }
     }
 
-    function getStationMax() {
-      return parsePositiveInteger(elements.stationMaxInput.value);
+    function saveRosterValue(kind, id, value) {
+      localStorage.setItem(rosterKey(kind, id), value);
+    }
+
+    function setSettingsVisible(visible, shouldSave = true) {
+      elements.appHeader.hidden = !visible;
+      document.body.classList.toggle('settings-visible', visible);
+      document.body.classList.toggle('settings-hidden', !visible);
+      elements.settingsToggle.textContent = visible ? '設定隠す' : '設定表示';
+      elements.settingsToggle.setAttribute('aria-expanded', String(visible));
+      if (shouldSave) localStorage.setItem(settingKey('settingsVisible'), visible ? '1' : '0');
+    }
+
+    function setStatus(message, type = '') {
+      elements.csvStatus.textContent = message;
+      elements.csvStatus.className = `status ${type}`.trim();
     }
 
     function getReservedStations() {
-      const max = getStationMax();
-      const values = String(elements.reservedStationsInput.value || '')
-        .split(/[\s,、，]+/)
-        .map(parsePositiveInteger)
-        .filter((number) => number > 0)
-        .filter((number) => max === 0 || number <= max);
-      return new Set(values);
+      return new Set(
+        String(elements.reservedStationsInput.value || '')
+          .split(',')
+          .map((value) => Number(normalizeText(value)))
+          .filter((value) => Number.isInteger(value) && value > 0)
+      );
     }
 
-    function getAssignedStations(exceptId = '') {
-      const assigned = new Set();
-      for (const participant of participants) {
-        if (participant.feeType !== '持参枠') continue;
-        const id = String(participant.id);
-        if (id === String(exceptId)) continue;
-        const station = parsePositiveInteger(state.station.get(id));
-        if (station > 0) assigned.add(station);
-      }
-      return assigned;
+    function getStationMax() {
+      const max = Number(elements.stationMaxInput.value);
+      return Number.isInteger(max) && max > 0 ? max : 0;
     }
 
-    function getAvailableStationsFor(id) {
-      const max = getStationMax();
-      if (max <= 0) return [];
-
-      const reserved = getReservedStations();
-      const assignedByOthers = getAssignedStations(id);
-      const stations = [];
-      for (let number = 1; number <= max; number += 1) {
-        if (reserved.has(number)) continue;
-        if (assignedByOthers.has(number)) continue;
-        stations.push(number);
-      }
-      return stations;
+    function getActiveParticipants(feeName) {
+      return participants
+        .filter((participant) => participant.feeName === feeName && !state.dq.get(String(participant.id)))
+        .sort((a, b) => {
+          const checkedDiff = Number(Boolean(state.checked.get(String(a.id)))) - Number(Boolean(state.checked.get(String(b.id))));
+          return checkedDiff || compareParticipants(a, b);
+        });
     }
 
-    function isValidStationFor(id, station) {
-      if (!station) return true;
-      const max = getStationMax();
-      if (max <= 0 || station < 1 || station > max) return false;
-      if (getReservedStations().has(station)) return false;
-      if (getAssignedStations(id).has(station)) return false;
-      return true;
-    }
-
-    function buildStationSelect(participant) {
-      const id = String(participant.id);
-      const current = parsePositiveInteger(state.station.get(id));
-      const max = getStationMax();
-      const available = getAvailableStationsFor(id);
-      const validCurrent = isValidStationFor(id, current);
-      const options = [];
-      const disabled = max <= 0 ? 'disabled' : '';
-      const invalidClass = current && !validCurrent ? ' invalid' : '';
-
-      options.push(`<option value="">${max <= 0 ? '上限未設定' : '未選択'}</option>`);
-
-      if (current > 0 && !available.includes(current)) {
-        const label = validCurrent ? String(current) : `${current}（使用不可）`;
-        options.push(`<option value="${current}" selected>${escapeHtml(label)}</option>`);
-      }
-
-      for (const station of available) {
-        const selected = station === current ? 'selected' : '';
-        options.push(`<option value="${station}" ${selected}>${station}</option>`);
-      }
-
-      return `<select class="station-select${invalidClass}" data-station-id="${escapeHtml(id)}" aria-label="${escapeHtml(participant.name)}の台番号" ${disabled}>${options.join('')}</select>`;
-    }
-
-    function stationSummary() {
-      const max = getStationMax();
-      if (max <= 0) return '台番号上限: 未設定';
-
-      const reserved = getReservedStations();
-      const assigned = getAssignedStations();
-      const assignedCount = [...assigned].filter((number) => number >= 1 && number <= max).length;
-      let availableCount = 0;
-      for (let number = 1; number <= max; number += 1) {
-        if (!reserved.has(number) && !assigned.has(number)) availableCount += 1;
-      }
-      return `台番号: 1〜${max} / スタッフ使用 ${reserved.size}台 / 割当済み ${assignedCount}台 / 未使用候補 ${availableCount}台`;
+    function getDqParticipants() {
+      return participants
+        .filter((participant) => state.dq.get(String(participant.id)))
+        .sort(compareParticipants);
     }
 
     function renderFees() {
@@ -917,107 +950,249 @@
       elements.bringFeeBadge.innerHTML = `<small>参加費</small>${formatYen(elements.bringFeeInput.value)}`;
     }
 
-    function renderRoster(feeType, body, summary) {
-      const list = participants.filter((participant) => participant.feeType === feeType);
-      const sorted = sortRoster(list);
-      const checkedCount = list.filter((participant) => isChecked(participant.id)).length;
-      const uncheckedCount = list.length - checkedCount;
-      const extraSummary = feeType === '持参枠' ? `<br>${stationSummary()}` : '';
+    function renderRevenue() {
+      const generalFee = getFeeValue('一般枠');
+      const bringFee = getFeeValue('持参枠');
+      const checkedActive = participants.filter((participant) => (
+        !state.dq.get(String(participant.id)) && state.checked.get(String(participant.id))
+      ));
+      const generalCount = checkedActive.filter((participant) => participant.feeName === '一般枠').length;
+      const bringCount = checkedActive.filter((participant) => participant.feeName === '持参枠').length;
+      const total = generalCount * generalFee + bringCount * bringFee;
 
-      summary.innerHTML = `合計 ${list.length}名 / 未チェック ${uncheckedCount}名 / チェック済み ${checkedCount}名${extraSummary}`;
+      elements.totalRevenue.textContent = `${total.toLocaleString('ja-JP')}円`;
+      elements.totalBreakdown.textContent = `一般枠 ${generalCount}名 × ${generalFee.toLocaleString('ja-JP')}円 / 持参枠 ${bringCount}名 × ${bringFee.toLocaleString('ja-JP')}円`;
+    }
 
-      if (participants.length === 0) {
-        const colspan = feeType === '持参枠' ? 3 : 2;
-        body.innerHTML = `<tr><td class="empty" colspan="${colspan}">上部から参加者CSVを選択してください。</td></tr>`;
-        return;
-      }
-
-      if (sorted.length === 0) {
-        const colspan = feeType === '持参枠' ? 3 : 2;
-        body.innerHTML = `<tr><td class="empty" colspan="${colspan}">該当者はいません。</td></tr>`;
-        return;
-      }
-
-      body.innerHTML = sorted.map((participant) => {
+    function getUsedStations(exceptId = '') {
+      const used = new Set();
+      for (const participant of participants) {
         const id = String(participant.id);
-        const checked = isChecked(id);
-        const name = escapeHtml(participant.name);
-        if (feeType === '持参枠') {
-          return `
-            <tr class="${checked ? 'checked' : ''}">
-              <td class="name">${name}</td>
-              <td class="station-cell">${buildStationSelect(participant)}</td>
-              <td class="check-cell"><input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
-            </tr>`;
+        if (participant.feeName !== '持参枠' || id === exceptId || state.dq.get(id)) continue;
+        const station = Number(state.station.get(id));
+        if (Number.isInteger(station) && station > 0) used.add(station);
+      }
+      return used;
+    }
+
+    function makeStationSelect(participant) {
+      const id = String(participant.id);
+      const current = Number(state.station.get(id));
+      const currentString = state.station.get(id) || '';
+      const max = getStationMax();
+      const reserved = getReservedStations();
+      const used = getUsedStations(id);
+      const options = ['<option value="">未選択</option>'];
+
+      if (max > 0) {
+        for (let station = 1; station <= max; station += 1) {
+          const isCurrent = station === current;
+          if (isCurrent || (!reserved.has(station) && !used.has(station))) {
+            options.push(`<option value="${station}" ${isCurrent ? 'selected' : ''}>${station}</option>`);
+          }
         }
-        return `
-          <tr class="${checked ? 'checked' : ''}">
-            <td class="name">${name}</td>
-            <td class="check-cell"><input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? 'checked' : ''} aria-label="${name}をチェック"></td>
-          </tr>`;
-      }).join('');
+      }
+
+      const currentInvalid = currentString !== '' && (
+        !Number.isInteger(current)
+        || current <= 0
+        || (max > 0 && current > max)
+        || reserved.has(current)
+        || used.has(current)
+      );
+
+      if (currentString && !options.some((option) => option.includes(`value="${escapeHtml(currentString)}"`))) {
+        options.push(`<option value="${escapeHtml(currentString)}" selected>${escapeHtml(currentString)}（要確認）</option>`);
+      }
+
+      return `<select class="station-select ${currentInvalid ? 'invalid' : ''}" data-station-id="${escapeHtml(id)}" aria-label="${escapeHtml(participant.name)}の台番号">${options.join('')}</select>`;
+    }
+
+    function makeRosterRow(participant) {
+      const id = String(participant.id);
+      const checked = Boolean(state.checked.get(id));
+      const isBring = participant.feeName === '持参枠';
+      const gridClass = isBring ? 'bring-grid' : 'general-grid';
+      const confirmation = participant.confirmation ? `<span class="name-hint">${escapeHtml(participant.confirmation)} / 左スライドでDQ</span>` : '<span class="name-hint">左スライドでDQ</span>';
+      const stationCell = isBring ? `<div class="station-cell">${makeStationSelect(participant)}</div>` : '';
+      return `
+        <div class="row-shell" data-row-id="${escapeHtml(id)}">
+          <button class="dq-delete" type="button" data-dq-id="${escapeHtml(id)}" aria-label="${escapeHtml(participant.name)}をDQ名簿へ移動">削除</button>
+          <div class="participant-row ${gridClass} ${checked ? 'checked' : ''}" data-swipe-row="${escapeHtml(id)}">
+            <div class="name-cell" data-swipe-handle="${escapeHtml(id)}">
+              <span class="name-text">${escapeHtml(participant.name)}</span>
+              ${confirmation}
+            </div>
+            ${stationCell}
+            <div class="check-cell"><input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? 'checked' : ''} aria-label="${escapeHtml(participant.name)}を受付済みにする"></div>
+          </div>
+        </div>`;
+    }
+
+    function renderList(feeName, bodyElement, summaryElement) {
+      const active = getActiveParticipants(feeName);
+      const totalInCsv = participants.filter((participant) => participant.feeName === feeName).length;
+      const dqCount = participants.filter((participant) => participant.feeName === feeName && state.dq.get(String(participant.id))).length;
+      const checkedCount = active.filter((participant) => state.checked.get(String(participant.id))).length;
+
+      summaryElement.textContent = `表示 ${active.length}名 / 受付済み ${checkedCount}名 / DQ ${dqCount}名 / CSV内 ${totalInCsv}名`;
+
+      if (!active.length) {
+        bodyElement.innerHTML = participants.length
+          ? '<div class="empty">表示できる参加者がいません。</div>'
+          : '<div class="empty">CSVを読み込むとここに名簿が表示されます。</div>';
+        return;
+      }
+
+      bodyElement.innerHTML = active.map(makeRosterRow).join('');
+    }
+
+    function renderDqList() {
+      const dqParticipants = getDqParticipants();
+      elements.dqCount.textContent = `${dqParticipants.length}名`;
+      if (!dqParticipants.length) {
+        elements.dqList.innerHTML = '<div class="empty">DQ者はいません。</div>';
+        return;
+      }
+
+      elements.dqList.innerHTML = dqParticipants.map((participant) => `
+        <div class="dq-item">
+          <div>
+            <span class="dq-name">${escapeHtml(participant.name)}</span>
+            <span class="dq-meta">${escapeHtml(participant.feeName)}${participant.confirmation ? ` / ${escapeHtml(participant.confirmation)}` : ''}</span>
+          </div>
+          <button class="restore-button" type="button" data-restore-id="${escapeHtml(participant.id)}">戻す</button>
+        </div>`).join('');
     }
 
     function render() {
       renderFees();
-      renderRoster('一般枠', elements.generalBody, elements.generalSummary);
-      renderRoster('持参枠', elements.bringBody, elements.bringSummary);
-      renderSettingsSummary();
+      renderRevenue();
+      renderList('一般枠', elements.generalBody, elements.generalSummary);
+      renderList('持参枠', elements.bringBody, elements.bringSummary);
+      renderDqList();
     }
 
-    async function readCsvFile(file) {
-      const buffer = await file.arrayBuffer();
-      const encodings = ['utf-8', 'shift_jis'];
-      for (const encoding of encodings) {
-        try {
-          return new TextDecoder(encoding, { fatal: true }).decode(buffer);
-        } catch (_) {
-          // Try the next encoding.
-        }
+    function moveToDq(id) {
+      const participant = participants.find((item) => String(item.id) === String(id));
+      if (!participant) return;
+      state.dq.set(String(id), true);
+      state.checked.set(String(id), false);
+      state.station.set(String(id), '');
+      saveRosterValue('dq', id, '1');
+      saveRosterValue('checked', id, '0');
+      saveRosterValue('station', id, '');
+      render();
+    }
+
+    function restoreFromDq(id) {
+      state.dq.set(String(id), false);
+      saveRosterValue('dq', id, '0');
+      render();
+    }
+
+    function closeAllRevealed(exceptShell = null) {
+      document.querySelectorAll('.row-shell.revealed').forEach((shell) => {
+        if (shell !== exceptShell) shell.classList.remove('revealed');
+      });
+    }
+
+    function setupSwipeGestures() {
+      let active = null;
+
+      document.addEventListener('pointerdown', (event) => {
+        const handle = event.target.closest('[data-swipe-handle]');
+        if (!handle) return;
+
+        const shell = handle.closest('.row-shell');
+        const row = shell?.querySelector('.participant-row');
+        if (!shell || !row) return;
+
+        closeAllRevealed(shell);
+        active = {
+          pointerId: event.pointerId,
+          shell,
+          row,
+          startX: event.clientX,
+          currentX: event.clientX,
+          wasRevealed: shell.classList.contains('revealed'),
+        };
+        row.style.transition = 'none';
+        handle.setPointerCapture?.(event.pointerId);
+      });
+
+      document.addEventListener('pointermove', (event) => {
+        if (!active || event.pointerId !== active.pointerId) return;
+        active.currentX = event.clientX;
+        const base = active.wasRevealed ? -88 : 0;
+        const delta = active.currentX - active.startX;
+        const translate = Math.max(-88, Math.min(0, base + delta));
+        active.row.style.transform = `translateX(${translate}px)`;
+      });
+
+      function finishSwipe(event) {
+        if (!active || event.pointerId !== active.pointerId) return;
+        const base = active.wasRevealed ? -88 : 0;
+        const delta = active.currentX - active.startX;
+        const finalTranslate = base + delta;
+        active.row.style.transition = '';
+        active.row.style.transform = '';
+        active.shell.classList.toggle('revealed', finalTranslate < -44);
+        active = null;
       }
-      return new TextDecoder('utf-8').decode(buffer);
+
+      document.addEventListener('pointerup', finishSwipe);
+      document.addEventListener('pointercancel', finishSwipe);
     }
 
-    async function handleCsvFile(file) {
+    elements.csvInput.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
       try {
-        const text = await readCsvFile(file);
-        const rows = parseCsv(text);
-        participants = buildParticipants(rows);
-        currentFileName = file.name || '';
-        loadRosterStateForParticipants();
-
-        const competitorRows = rows.filter((row) => normalizeText(getField(row, ['Venue Type', 'VenueType'])).toLowerCase() === 'competitor');
-        const generalCount = participants.filter((participant) => participant.feeType === '一般枠').length;
-        const bringCount = participants.filter((participant) => participant.feeType === '持参枠').length;
-
-        if (rows.length === 0) {
-          setStatus('CSVに行が見つかりませんでした。ファイル内容を確認してください。', 'error');
-        } else if (participants.length === 0) {
-          setStatus(`CSVは読み込みましたが、対象者が見つかりませんでした。読み込み行数: ${rows.length}行 / competitor: ${competitorRows.length}行。Venue Fee Name が 一般枠 または 持参枠 になっているか確認してください。`, 'warn');
-        } else {
-          setStatus(`${currentFileName} を読み込みました。名簿対象 ${participants.length}名（一般枠 ${generalCount}名 / 持参枠 ${bringCount}名）。competitor全体は ${competitorRows.length}名です。`, 'ok');
-        }
+        const text = await readFileText(file);
+        const parsed = parseParticipants(text);
+        participants = parsed;
+        currentFileName = file.name;
+        saveParticipants();
+        loadRosterState();
         render();
+
+        const general = parsed.filter((participant) => participant.feeName === '一般枠').length;
+        const bring = parsed.filter((participant) => participant.feeName === '持参枠').length;
+        setStatus(`${file.name} を読み込みました。一般枠 ${general}名 / 持参枠 ${bring}名。`, parsed.length ? 'ok' : 'warn');
       } catch (error) {
         console.error(error);
-        participants = [];
-        setStatus('CSVの読み込みに失敗しました。CSV形式、文字コード、ヘッダー名を確認してください。', 'error');
-        render();
+        setStatus(error.message || 'CSVの読み込みに失敗しました。', 'error');
       }
-    }
+    });
 
-    elements.csvInput.addEventListener('change', (event) => {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      handleCsvFile(file);
+    elements.settingsToggle.addEventListener('click', () => {
+      setSettingsVisible(elements.appHeader.hidden);
+    });
+
+    elements.resetRosterButton.addEventListener('click', () => {
+      const ok = window.confirm('チェック状態・台番号・DQ状態をリセットします。よろしいですか？');
+      if (!ok) return;
+      for (const participant of participants) {
+        const id = String(participant.id);
+        state.checked.set(id, false);
+        state.station.set(id, '');
+        state.dq.set(id, false);
+        saveRosterValue('checked', id, '0');
+        saveRosterValue('station', id, '');
+        saveRosterValue('dq', id, '0');
+      }
+      render();
+      setStatus('名簿状態をリセットしました。', 'ok');
     });
 
     document.addEventListener('change', (event) => {
-      const checkInput = event.target.closest('[data-check-id]');
-      if (checkInput) {
-        const id = String(checkInput.dataset.checkId);
-        state.checked.set(id, checkInput.checked);
-        localStorage.setItem(rosterKey('checked', id), checkInput.checked ? '1' : '0');
+      const checkbox = event.target.closest('[data-check-id]');
+      if (checkbox) {
+        const id = String(checkbox.dataset.checkId);
+        state.checked.set(id, checkbox.checked);
+        saveRosterValue('checked', id, checkbox.checked ? '1' : '0');
         render();
         return;
       }
@@ -1026,57 +1201,62 @@
       if (stationSelect) {
         const id = String(stationSelect.dataset.stationId);
         state.station.set(id, stationSelect.value);
-        localStorage.setItem(rosterKey('station', id), stationSelect.value);
+        saveRosterValue('station', id, stationSelect.value);
         render();
       }
+    });
+
+    document.addEventListener('click', (event) => {
+      const dqButton = event.target.closest('[data-dq-id]');
+      if (dqButton) {
+        moveToDq(dqButton.dataset.dqId);
+        return;
+      }
+
+      const restoreButton = event.target.closest('[data-restore-id]');
+      if (restoreButton) {
+        restoreFromDq(restoreButton.dataset.restoreId);
+        return;
+      }
+
+      if (!event.target.closest('.row-shell')) closeAllRevealed();
     });
 
     document.addEventListener('input', (event) => {
       if (event.target === elements.generalFeeInput) {
         localStorage.setItem(settingKey('generalFee'), event.target.value);
         renderFees();
-        renderSettingsSummary();
-        return;
+        renderRevenue();
       }
+
       if (event.target === elements.bringFeeInput) {
         localStorage.setItem(settingKey('bringFee'), event.target.value);
         renderFees();
-        renderSettingsSummary();
-        return;
+        renderRevenue();
       }
+
       if (event.target === elements.stationMaxInput) {
         localStorage.setItem(settingKey('stationMax'), event.target.value);
         render();
-        return;
       }
+
       if (event.target === elements.reservedStationsInput) {
         localStorage.setItem(settingKey('reservedStations'), event.target.value);
         render();
       }
     });
 
-    elements.settingsToggleButton.addEventListener('click', () => {
-      setSettingsHidden(!document.body.classList.contains('settings-hidden'));
-    });
-
-    elements.resetRosterButton.addEventListener('click', () => {
-      for (const participant of participants) {
-        const id = String(participant.id);
-        state.checked.set(id, false);
-        state.station.set(id, '');
-        localStorage.removeItem(rosterKey('checked', id));
-        localStorage.removeItem(rosterKey('station', id));
-      }
-      render();
-      if (participants.length > 0) {
-        setStatus(`${currentFileName || 'CSV'} のチェック状態と台番号をリセットしました。`, 'ok');
-      } else {
-        setStatus('リセットしました。CSVを読み込むと名簿が表示されます。', 'ok');
-      }
-    });
-
+    loadParticipants();
     loadSettings();
+    loadRosterState();
+    setupSwipeGestures();
     render();
+
+    if (participants.length) {
+      const general = participants.filter((participant) => participant.feeName === '一般枠').length;
+      const bring = participants.filter((participant) => participant.feeName === '持参枠').length;
+      setStatus(`${currentFileName || '前回のCSV'} の保存済みデータを表示しています。一般枠 ${general}名 / 持参枠 ${bring}名。`, 'ok');
+    }
   </script>
 </body>
 </html>

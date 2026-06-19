@@ -837,7 +837,11 @@
         const fallbackId = `${normalizeText(row[confirmationKey]) || 'row'}-${index + 1}`;
         const id = normalizeText(row[idKey]) || fallbackId;
         const venueType = normalizeText(row[venueTypeKey]).toLowerCase();
-        const feeName = normalizeText(row[feeNameKey]);
+        const rawFeeName = normalizeText(row[feeNameKey]);
+        const feeName = rawFeeName.includes('一般') ? '一般枠'
+          : rawFeeName.includes('持参') ? '持参枠'
+          : rawFeeName;
+
         return {
           id,
           name: getDisplayName(row),

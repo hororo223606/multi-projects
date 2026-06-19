@@ -536,10 +536,10 @@
       <div class="controls" aria-label="CSVと参加費の入力">
         <label class="control-card">
           <span>
-            <strong>参加者CSV</strong>
-            <span class="help">CSVを選ぶと、その場で名簿を作成します。対象は Venue Type = competitor、Venue Fee Name = 一般枠 / 持参枠 です。</span>
+            <strong>参加者CSV / CSV JSON</strong>
+            <span class="help">CSVまたは.csv.jsonを選ぶと、その場で名簿を作成します。対象は Venue Type = competitor、Venue Fee Name = 一般枠 / 持参枠 です。</span>
           </span>
-          <input id="csvInput" type="file" accept=".csv,text/csv" />
+          <input id="csvInput" type="file" accept=".csv,.json,.csv.json,text/csv,application/json" />
         </label>
 
         <label class="control-card">
@@ -611,7 +611,7 @@
         <div id="dqList" class="dq-list"></div>
       </section>
 
-      <div id="csvStatus" class="status">ページ上部の「参加者CSV」からCSVファイルを選択してください。</div>
+      <div id="csvStatus" class="status">ページ上部の「参加者CSV / CSV JSON」からCSVまたは.csv.jsonファイルを選択してください。</div>
     </div>
   </header>
 
@@ -653,7 +653,7 @@
       </article>
     </section>
 
-    <div class="note">CSVから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠。チェック済みの参加者は各名簿の下へ移動します。名前を左にスライドするとDQ削除できます。</div>
+    <div class="note">CSV / CSV JSONから抽出: Venue Type = competitor / Venue Fee Name = 一般枠・持参枠。チェック済みの参加者は各名簿の下へ移動します。名前を左にスライドするとDQ削除できます。</div>
   </main>
 
   <script>
@@ -819,8 +819,31 @@
       return '';
     }
 
-    function parseParticipants(csvText) {
-      const objects = rowsToObjects(splitCsvLineAware(csvText));
+    function extractObjectsFromJson(value) {
+      if (Array.isArray(value)) return value;
+
+      if (value && typeof value === 'object') {
+        const candidates = [
+          value.rows,
+          value.data,
+          value.records,
+          value.attendees,
+          value.participants,
+          value.items,
+        ];
+
+        for (const candidate of candidates) {
+          if (Array.isArray(candidate)) return candidate;
+        }
+
+        const firstArray = Object.values(value).find((item) => Array.isArray(item));
+        if (firstArray) return firstArray;
+      }
+
+      throw new Error('.csv.jsonの中に参加者データの配列が見つかりません。');
+    }
+
+    function parseParticipantObjects(objects, sourceLabel = 'ファイル') {
       if (!objects.length) return [];
 
       const sample = objects[0];
@@ -830,7 +853,7 @@
       const confirmationKey = findHeader(sample, ['Confirmation Number', 'ConfirmationNumber']);
 
       if (!venueTypeKey || !feeNameKey) {
-        throw new Error('CSVに Venue Type または Venue Fee Name の列が見つかりません。');
+        throw new Error(`${sourceLabel}に Venue Type または Venue Fee Name の列が見つかりません。`);
       }
 
       return objects.map((row, index) => {
@@ -853,6 +876,18 @@
         participant.venueType === 'competitor'
         && (participant.feeName === '一般枠' || participant.feeName === '持参枠')
       ));
+    }
+
+    function parseParticipants(fileText, fileName = '') {
+      const lowerName = String(fileName || '').toLowerCase();
+      const looksLikeJson = lowerName.endsWith('.json') || lowerName.endsWith('.csv.json') || String(fileText || '').trim().startsWith('{') || String(fileText || '').trim().startsWith('[');
+
+      if (looksLikeJson) {
+        const json = JSON.parse(fileText);
+        return parseParticipantObjects(extractObjectsFromJson(json), '.csv.json');
+      }
+
+      return parseParticipantObjects(rowsToObjects(splitCsvLineAware(fileText)), 'CSV');
     }
 
     async function readFileText(file) {
@@ -1155,7 +1190,7 @@
 
       try {
         const text = await readFileText(file);
-        const parsed = parseParticipants(text);
+        const parsed = parseParticipants(text, file.name);
         participants = parsed;
         currentFileName = file.name;
         saveParticipants();

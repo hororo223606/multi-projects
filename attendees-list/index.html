@@ -878,16 +878,35 @@
       ));
     }
 
-    function parseParticipants(fileText, fileName = '') {
-      const lowerName = String(fileName || '').toLowerCase();
-      const looksLikeJson = lowerName.endsWith('.json') || lowerName.endsWith('.csv.json') || String(fileText || '').trim().startsWith('{') || String(fileText || '').trim().startsWith('[');
+    function parseCsvParticipants(fileText) {
+      return parseParticipantObjects(rowsToObjects(splitCsvLineAware(fileText)), 'CSV');
+    }
 
-      if (looksLikeJson) {
-        const json = JSON.parse(fileText);
-        return parseParticipantObjects(extractObjectsFromJson(json), '.csv.json');
+    function parseJsonParticipants(fileText) {
+      const json = JSON.parse(fileText);
+      return parseParticipantObjects(extractObjectsFromJson(json), '.csv.json');
+    }
+
+    function parseParticipants(fileText, fileName = '') {
+      const text = String(fileText || '');
+      const trimmed = text.trim();
+      const startsAsJson = trimmed.startsWith('{') || trimmed.startsWith('[');
+
+      if (!trimmed) return [];
+
+      if (startsAsJson) {
+        try {
+          return parseJsonParticipants(text);
+        } catch (jsonError) {
+          try {
+            return parseCsvParticipants(text);
+          } catch (_) {
+            throw jsonError;
+          }
+        }
       }
 
-      return parseParticipantObjects(rowsToObjects(splitCsvLineAware(fileText)), 'CSV');
+      return parseCsvParticipants(text);
     }
 
     async function readFileText(file) {
